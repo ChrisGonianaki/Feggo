@@ -145,25 +145,6 @@ p { margin: 0; }
 .row dt { color: var(--gold); font-weight: 400; font-size: 17px; }
 .row dd { margin: 0; color: var(--muted); font-size: 15px; }
 
-/* Light simulator: an oval wall light whose glow follows the chosen colour and intensity */
-.ls { --l: .12; --lamp: 255,180,90; position: relative; overflow: hidden; aspect-ratio: 4 / 4.4; background: #000; display: grid; place-items: center; }
-.ls-wall { position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 52% 48% at 50% 58%, rgba(var(--lamp), calc(var(--l) * .5)) 0%, rgba(var(--lamp), calc(var(--l) * .16)) 48%, transparent 80%); }
-.lamp { position: relative; height: 88%; aspect-ratio: 278 / 450; }
-.lamp-img { width: 100%; height: 100%; display: block; filter: url(#fBase);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent), linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent), linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
-          mask-composite: intersect; }
-.lamp-rim { position: absolute; left: 19.8%; top: 2.7%; width: 60%; height: 94%; border-radius: 999px;
-  border: 2px solid rgba(var(--lamp), calc(.12 + .88 * var(--l)));
-  box-shadow: 0 0 calc(8px + 44px * var(--l)) calc(1px + 7px * var(--l)) rgba(var(--lamp), calc(.55 * var(--l))), inset 0 0 calc(8px + 34px * var(--l)) rgba(var(--lamp), calc(.45 * var(--l))); }
-.lamp-disc { position: absolute; left: 28.8%; top: 64.9%; width: 46.8%; height: 29.8%; border-radius: 50%;
-  background: radial-gradient(circle at 50% 42%, #fff 0%, rgba(var(--lamp), 1) 46%, rgba(var(--lamp), .72) 100%);
-  opacity: calc(.04 + .96 * var(--l));
-  box-shadow: 0 0 calc(18px + 90px * var(--l)) calc(3px + 18px * var(--l)) rgba(var(--lamp), calc(.85 * var(--l))); }
-.ls-caption { position: absolute; left: 20px; bottom: 16px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,239,243,.8); }
-.ls-filters { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 .controls { margin-top: 28px; display: flex; flex-direction: column; gap: 22px; }
 .control { display: flex; align-items: center; gap: 18px; }
@@ -292,16 +273,6 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .site-header::before { content: ""; position: absolute; inset: 0 0 -36px 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.7) 55%, rgba(0,0,0,0) 100%); }
 .site-header.scrolled::before { display: none; }
 
-/* Smaller lamp, softer light that comes from behind the circle */
-.lamp { height: 64%; }
-.ls-wall { background: radial-gradient(ellipse 46% 40% at 50% 62%, rgba(var(--lamp), calc(var(--l) * .22)) 0%, rgba(var(--lamp), calc(var(--l) * .07)) 50%, transparent 80%); }
-.lamp-rim { border: 1px solid rgba(var(--lamp), calc(.1 + .35 * var(--l)));
-  box-shadow: 0 0 calc(4px + 16px * var(--l)) rgba(var(--lamp), calc(.18 * var(--l))); }
-.lamp-disc { background: #050403; opacity: 1;
-  border: 1.5px solid rgba(var(--lamp), calc(.2 + .6 * var(--l)));
-  box-shadow: 0 0 calc(6px + 34px * var(--l)) calc(1px + 5px * var(--l)) rgba(var(--lamp), calc(.5 * var(--l))),
-              inset 0 0 calc(6px + 26px * var(--l)) calc(1px + 3px * var(--l)) rgba(var(--lamp), calc(.55 * var(--l))); }
-.lamp-img { filter: url(#fBase) brightness(.9); }
 @media (max-width: 760px) { .hero-layer { background-position: 40% 0; } }
 
 /* Links as lines of light: no pills, just text over a glowing line */
@@ -321,3 +292,13 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .btn-ghost { --ln: 255,244,226; color: var(--text); border: 0; }
 .btn-ghost:hover { color: #fff; border: 0; }
 @media (max-width: 1000px) { .nav .nav-cta { padding: 15px 0; } .nav .nav-cta::after { display: none; } .nav .nav-cta { border-bottom: 1px solid var(--line); } }
+
+/* Light simulator: a slim up/down wall light on a textured wall */
+.ls { --l: .12; --lamp: 255,180,90; position: relative; overflow: hidden; aspect-ratio: 4 / 4.4; background: #0b0a09; }
+.wall-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.beam-fill { fill: rgb(var(--lamp)); opacity: calc(.5 * var(--l)); }
+.beam-grain { fill: rgb(var(--lamp)); opacity: calc(.28 * var(--l)); }
+.halo ellipse { fill: rgb(var(--lamp)); opacity: calc(.14 * var(--l)); }
+.slit rect { fill: rgb(var(--lamp)); opacity: calc(.12 + .88 * var(--l)); }
+.slit.core rect { fill: #fff; opacity: calc(.1 + .8 * var(--l)); }
+.ls-caption { position: absolute; left: 20px; bottom: 16px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,239,243,.8); }

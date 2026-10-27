@@ -128,7 +128,6 @@
   var dimOut = document.getElementById("dimOut");
   var stage = document.getElementById("studyPhoto");
   var toneLabel = document.getElementById("toneLabel");
-  var mBase = document.getElementById("mBase");
   // Per-channel gains that move the photo's warm light to each lamp colour,
   // plus the colour of the glow and its temperature.
   var TONES = {
@@ -140,14 +139,8 @@
   var level = 12;
   var userTouched = false;
 
-  function matrix(el, g, b) {
-    el.setAttribute("values",
-      (g[0] * b).toFixed(3) + " 0 0 0 0 0 " + (g[1] * b).toFixed(3) + " 0 0 0 0 0 " + (g[2] * b).toFixed(3) + " 0 0 0 0 0 1 0");
-  }
-
   function render() {
     var s = level / 100;
-    matrix(mBase, TONES[tone].gain, 0.35 + 0.75 * s);
     stage.style.setProperty("--l", s.toFixed(3));
     stage.style.setProperty("--lamp", TONES[tone].glow);
     var active = document.querySelector('.chip[data-tone="' + tone + '"] span');
