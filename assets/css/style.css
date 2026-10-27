@@ -354,3 +354,18 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 @keyframes numGlow { 0% { text-shadow: 0 0 0 rgba(201,154,91,0); } 60% { text-shadow: 0 0 36px rgba(201,154,91,.55); } 100% { text-shadow: 0 0 14px rgba(201,154,91,.18); } }
 .big-num.done { animation: numGlow 1.4s ease-out forwards; }
 @media (max-width: 760px) { .glance-item, .glance-item:first-child { padding: 0; border-left: 0; } }
+
+/* Phones: keep the projects carousel tiles tall (must come after the desktop bento rules) */
+@media (max-width: 760px) {
+  .projects { display: flex; grid-auto-rows: auto; }
+  .project { flex: 0 0 80%; aspect-ratio: 4 / 5; min-height: 0; }
+  .project:nth-child(n) { grid-column: auto; grid-row: auto; }
+}
+
+/* iOS Safari safety: explicit sizes, absolutely placed image, always visible */
+@media (max-width: 760px) {
+  .projects { align-items: flex-start; }
+  .project { flex: 0 0 78%; width: 78%; height: 100vw; aspect-ratio: auto; position: relative; }
+  .project img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .project.reveal { opacity: 1; transform: none; transition: none; }
+}
