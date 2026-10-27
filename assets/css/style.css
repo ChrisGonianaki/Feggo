@@ -302,3 +302,8 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .slit rect { fill: rgb(var(--lamp)); opacity: calc(.12 + .88 * var(--l)); }
 .slit.core rect { fill: #fff; opacity: calc(.1 + .8 * var(--l)); }
 .ls-caption { position: absolute; left: 20px; bottom: 16px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,239,243,.8); }
+
+/* Fainter light lines */
+.nav .nav-cta::after, .btn::after { opacity: .55; box-shadow: 0 0 4px 0 rgba(var(--ln, 201,154,91), .4), 0 0 12px 1px rgba(var(--ln, 201,154,91), .15); }
+.nav .nav-cta:hover::after, .btn:hover::after { opacity: .9; box-shadow: 0 0 6px 1px rgba(var(--ln, 201,154,91), .6), 0 0 20px 3px rgba(var(--ln, 201,154,91), .28); }
+.btn { text-shadow: none; }
