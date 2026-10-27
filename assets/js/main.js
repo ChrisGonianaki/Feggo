@@ -30,6 +30,11 @@
     "study.r4t": "Acoustic integration",
     "study.r4": "light and comfort in a single construction",
 
+    "band.quote": "We don't follow change.<br>We bring it.",
+    "story.s1": "Production",
+    "story.s2": "Transport",
+    "story.s3": "Installation",
+    "story.s4": "Result",
     "services.title": "What FEGGO delivers",
     "services.s1t": "Custom luminaires",
     "services.s1": "Unique pieces made for a specific space, scale and aesthetic.",

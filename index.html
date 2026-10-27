@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=1793127593">
+  <link rel="stylesheet" href="assets/css/style.css?v=1793127867">
 </head>
 <body>
 
@@ -22,9 +22,9 @@
     <a href="#top" class="logo" aria-label="FEGGO"><img src="assets/img/logo-wordmark.png" alt="FEGGO" width="144" height="54"></a>
     <nav class="nav" id="nav">
       <a href="#about" data-i18n="nav.about">Η εταιρεία</a>
+      <a href="#process" data-i18n="nav.process">Διαδικασία</a>
       <a href="#study" data-i18n="nav.study">Φωτοτεχνική μελέτη</a>
       <a href="#projects" data-i18n="nav.projects">Έργα</a>
-      <a href="#process" data-i18n="nav.process">Διαδικασία</a>
       <a href="#contact" class="nav-cta" data-i18n="nav.contact">Επικοινωνία</a>
     </nav>
     <div class="header-tools">
@@ -79,23 +79,6 @@
     </div>
   </section>
 
-  <!-- Lighting design -->
-  <section class="section" id="study">
-    <div class="container study">
-      <div class="study-text">
-        <p class="eyebrow" data-i18n="study.eyebrow">Μελέτη φωτισμού</p>
-        <h2 data-i18n="study.title">Το φως σχεδιάζεται πριν κατασκευαστεί</h2>
-        <p class="lead" data-i18n="study.lead">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
-      </div>
-      <dl class="rows">
-        <div class="row reveal"><dt data-i18n="study.r1t">Γραμμικός φωτισμός</dt><dd data-i18n="study.r1">συνεχής ένταξη στην αρχιτεκτονική</dd></div>
-        <div class="row reveal"><dt data-i18n="study.r2t">Accent και framing</dt><dd data-i18n="study.r2">ακριβής ανάδειξη αντικειμένων και υλικών</dd></div>
-        <div class="row reveal"><dt>Downlighting</dt><dd data-i18n="study.r3">διακριτική γενική και λειτουργική στάθμη</dd></div>
-        <div class="row reveal"><dt data-i18n="study.r4t">Ακουστική ενσωμάτωση</dt><dd data-i18n="study.r4">φως και άνεση σε κοινή κατασκευή</dd></div>
-      </dl>
-    </div>
-  </section>
-
   <!-- Services -->
   <section class="section alt" id="services">
     <div class="container">
@@ -103,19 +86,73 @@
         <h2 data-i18n="services.title">Τι αναλαμβάνει η FEGGO</h2>
       </div>
       <div class="grid-3">
-        <article class="feature reveal">
+        <article class="service reveal">
+          <img src="assets/img/svc-custom.jpg" alt="Custom wave-shaped light pendant above a reception desk" loading="lazy">
           <h3 data-i18n="services.s1t">Custom φωτιστικά</h3>
           <p data-i18n="services.s1">Μοναδικές κατασκευές για συγκεκριμένο χώρο, κλίμακα και αισθητική.</p>
         </article>
-        <article class="feature reveal">
+        <article class="service reveal">
+          <img src="assets/img/svc-special.jpg" alt="Curved ribbed-glass light installation" loading="lazy">
           <h3 data-i18n="services.s3t">Ειδικές κατασκευές</h3>
           <p data-i18n="services.s3">Μέταλλο, ξύλο, γυαλί και σύνθετα υλικά.</p>
         </article>
-        <article class="feature reveal">
+        <article class="service reveal">
+          <img src="assets/img/svc-light.jpg" alt="Sculptural wall light with a profile face" loading="lazy">
           <h3 data-i18n="services.s4t">Παραγωγή και παράδοση</h3>
           <p data-i18n="services.s4">Κατασκευή, ποιοτικός έλεγχος και παράδοση.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section alt" id="process">
+    <div class="container">
+      <div class="section-head">
+        <h2 data-i18n="process.title">Από το σχέδιο στην κατασκευή</h2>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><span class="step-num">01</span><span data-i18n="process.p1">Αρχιτεκτονική πρόθεση</span></li>
+        <li class="reveal"><span class="step-num">02</span><span data-i18n="process.p2">Έλεγχος εφικτότητας</span></li>
+        <li class="reveal"><span class="step-num">03</span><span data-i18n="process.p3">Τεχνική ανάπτυξη</span></li>
+        <li class="reveal"><span class="step-num">04</span><span data-i18n="process.p4">Πρωτότυπο και παραγωγή</span></li>
+        <li class="reveal"><span class="step-num">05</span><span data-i18n="process.p5">Έλεγχος και παράδοση</span></li>
+      </ol>
+      <div class="story reveal">
+        <figure><img src="assets/img/story-1.jpg" alt="Gold reception desk being built in the workshop" loading="lazy"><figcaption data-i18n="story.s1">Παραγωγή</figcaption></figure>
+        <figure><img src="assets/img/story-2.jpg" alt="Loading the piece onto a truck" loading="lazy"><figcaption data-i18n="story.s2">Μεταφορά</figcaption></figure>
+        <figure><img src="assets/img/story-3.jpg" alt="Carrying the piece to the hotel" loading="lazy"><figcaption data-i18n="story.s3">Τοποθέτηση</figcaption></figure>
+        <figure><img src="assets/img/story-4.jpg" alt="The finished gold reception desk installed" loading="lazy"><figcaption data-i18n="story.s4">Αποτέλεσμα</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statement band -->
+  <section class="band" aria-label="FEGGO">
+    <div class="band-img"></div>
+    <div class="container band-inner">
+      <p class="band-quote" data-i18n="band.quote">Δεν ακολουθούμε την αλλαγή.<br>Φέρνουμε την αλλαγή.</p>
+    </div>
+  </section>
+
+  <!-- Lighting design -->
+  <section class="section" id="study">
+    <div class="container study">
+      <div class="study-text">
+        <p class="eyebrow" data-i18n="study.eyebrow">Μελέτη φωτισμού</p>
+        <h2 data-i18n="study.title">Το φως σχεδιάζεται πριν κατασκευαστεί</h2>
+        <p class="lead" data-i18n="study.lead">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
+        <dl class="rows">
+          <div class="row reveal"><dt data-i18n="study.r1t">Γραμμικός φωτισμός</dt><dd data-i18n="study.r1">συνεχής ένταξη στην αρχιτεκτονική</dd></div>
+          <div class="row reveal"><dt data-i18n="study.r2t">Accent και framing</dt><dd data-i18n="study.r2">ακριβής ανάδειξη αντικειμένων και υλικών</dd></div>
+          <div class="row reveal"><dt>Downlighting</dt><dd data-i18n="study.r3">διακριτική γενική και λειτουργική στάθμη</dd></div>
+          <div class="row reveal"><dt data-i18n="study.r4t">Ακουστική ενσωμάτωση</dt><dd data-i18n="study.r4">φως και άνεση σε κοινή κατασκευή</dd></div>
+        </dl>
+      </div>
+      <figure class="study-photo reveal">
+        <img src="assets/img/study-lobby.jpg" alt="Hotel lobby with a warmly lit stone column and curved seating" loading="lazy">
+        <figcaption>Themis Beach Hotel</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -155,24 +192,9 @@
     </div>
   </section>
 
-  <!-- Process -->
-  <section class="section alt" id="process">
-    <div class="container">
-      <div class="section-head">
-        <h2 data-i18n="process.title">Από το σχέδιο στην κατασκευή</h2>
-      </div>
-      <ol class="steps">
-        <li class="reveal"><span class="step-num">01</span><span data-i18n="process.p1">Αρχιτεκτονική πρόθεση</span></li>
-        <li class="reveal"><span class="step-num">02</span><span data-i18n="process.p2">Έλεγχος εφικτότητας</span></li>
-        <li class="reveal"><span class="step-num">03</span><span data-i18n="process.p3">Τεχνική ανάπτυξη</span></li>
-        <li class="reveal"><span class="step-num">04</span><span data-i18n="process.p4">Πρωτότυπο και παραγωγή</span></li>
-        <li class="reveal"><span class="step-num">05</span><span data-i18n="process.p5">Έλεγχος και παράδοση</span></li>
-      </ol>
-    </div>
-  </section>
-
   <!-- Contact -->
   <section class="section contact" id="contact">
+    <div class="contact-bg" aria-hidden="true"></div>
     <div class="container">
       <img class="contact-logo" src="assets/img/logo-full.png" alt="FEGGO — Custom Designs Come to Light" width="220" height="111">
       <h2 class="contact-title" data-i18n="contact.title">Έχετε ένα σχέδιο<br>που ζητά να υλοποιηθεί;</h2>
@@ -207,6 +229,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=1793127593"></script>
+<script src="assets/js/main.js?v=1793127867"></script>
 </body>
 </html>
