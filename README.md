@@ -25,6 +25,10 @@ python3 -m http.server 8000
 - Link straight to English with `?lang=en`.
 - To edit text: Greek lives in `index.html`, English in the `EN` object in `assets/js/main.js` (same `data-i18n` keys).
 
+## Live site
+
+https://chrisgonianaki.github.io/Feggo/
+
 ## Publishing
 
 Static site with no build step, so it works on GitHub Pages (Settings → Pages → deploy from branch), Netlify, or any web host.
