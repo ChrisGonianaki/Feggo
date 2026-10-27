@@ -103,10 +103,10 @@ p { margin: 0; }
           mask-image: linear-gradient(180deg, #000 52%, transparent 100%);
 }
 .hero-layer { position: absolute; inset: 0; background: url("../img/hero-chandelier.jpg") 50% 0 / cover no-repeat; }
-.hero-layer.dim { filter: brightness(.4) saturate(.8); }
+.hero-layer.dim { filter: brightness(.3) saturate(.8); }
 /* The wave of light is drawn on a canvas that only contains the glowing strands */
 .hero-wave { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
-.hero::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,.4) 38%, rgba(0,0,0,0) 68%); }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.82) 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,0) 72%); }
 .hero-content, .hero-foot { z-index: 2; }
 .hero-content { position: relative; padding-bottom: 96px; padding-top: 220px; }
 .hero .eyebrow { margin-bottom: 26px; }

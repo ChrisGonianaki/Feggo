@@ -189,6 +189,24 @@
       return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
     }
 
+    // Resting state: every line is on, and its brightness ripples gently along the ribbons.
+    var ANG = -18 * Math.PI / 180, DX = Math.cos(ANG), DY = Math.sin(ANG);
+    var RIPPLE_L = 2300, RIPPLE_LAMBDA = 340, RIPPLE_SPEED = reduceMotion ? 40 : 95;   // image px, px/s
+
+    function ripple(t) {
+      var cx = W / 2, cy = H / 2, half = RIPPLE_L / 2 * S;
+      var g = mctx.createLinearGradient(cx - DX * half, cy - DY * half, cx + DX * half, cy + DY * half);
+      var steps = Math.round(RIPPLE_L / RIPPLE_LAMBDA * 12);
+      var ph = t * RIPPLE_SPEED / RIPPLE_LAMBDA * Math.PI * 2;
+      for (var i = 0; i <= steps; i++) {
+        var f = i / steps, a = f * RIPPLE_L / RIPPLE_LAMBDA * Math.PI * 2;
+        var v = 0.3 + 0.13 * Math.sin(a - ph) + 0.06 * Math.sin(a * 0.55 + ph * 0.6 + 1.3);
+        g.addColorStop(f, "rgba(255,255,255," + Math.max(0, Math.min(1, v)).toFixed(3) + ")");
+      }
+      mctx.fillStyle = g;
+      mctx.fillRect(0, 0, W, H);
+    }
+
     var SIGMA = 105;                                // width of the wave crest along a ribbon
     var speed = reduceMotion ? 170 : 430;           // image px per second
     var laneIx = 0, sCur = -250, wait = 0.5, amp = 0, ampTarget = 1;
@@ -266,6 +284,8 @@
 
         mctx.setTransform(1, 0, 0, 1, 0, 0);
         mctx.clearRect(0, 0, W, H);
+        mctx.globalCompositeOperation = "source-over";
+        ripple(now / 1000);
         mctx.globalCompositeOperation = "lighter";
         wave(lane, sCur, amp);
 
@@ -278,14 +298,13 @@
         ctx.fillStyle = "rgba(226,160,70,.45)";
         ctx.fillRect(0, 0, W, H);
         ctx.globalCompositeOperation = "lighter";            // brighter than the resting lines
-        ctx.globalAlpha = 0.85;
+        ctx.globalAlpha = 0.5;
         ctx.drawImage(canvas, 0, 0);
         ctx.globalAlpha = 1;
         gctx.clearRect(0, 0, glow.width, glow.height);       // soft bloom around the lit strands
         gctx.drawImage(canvas, 0, 0, glow.width, glow.height);
         ctx.globalCompositeOperation = "lighter";
-        ctx.globalAlpha = 1;
-        ctx.drawImage(glow, 0, 0, W, H);
+        ctx.globalAlpha = 0.7;
         ctx.drawImage(glow, 0, 0, W, H);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = "source-over";
