@@ -321,3 +321,13 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .controls { margin-top: 0; }
 @media (max-width: 1000px) { .study { grid-template-columns: 1fr; } .study-visual { padding-top: 0; } }
 @media (max-width: 760px) { .fixture { left: 0; } }
+
+/* Elegant, frameless version */
+.beam { top: 26px; left: -70px; right: -70px; bottom: -90px;
+  background: conic-gradient(from 0deg at 130px 0, transparent 0deg 88deg, rgba(var(--lamp), calc(.1 * var(--l))) 112deg, rgba(var(--lamp), calc(.3 * var(--l))) 148deg, rgba(var(--lamp), calc(.14 * var(--l))) 178deg, transparent 204deg 360deg);
+  -webkit-mask-image: radial-gradient(ellipse 85% 95% at 130px 0, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%);
+          mask-image: radial-gradient(ellipse 85% 95% at 130px 0, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); }
+.study .rows .row, .study .row:last-child { border: 0; padding: 14px 0; }
+.study .rows { margin-top: 36px; }
+.study-visual { padding-top: 40px; }
+.study-visual .controls { gap: 26px; }

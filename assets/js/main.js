@@ -127,8 +127,6 @@
   var dimmer = document.getElementById("dimmer");
   var dimOut = document.getElementById("dimOut");
   var stage = document.getElementById("studyPhoto");
-  var toneK = document.getElementById("toneK");
-  var toneName = document.getElementById("toneName");
   // Per-channel gains that move the photo's warm light to each lamp colour,
   // plus the colour of the glow and its temperature.
   var TONES = {
@@ -144,9 +142,6 @@
     var s = level / 100;
     stage.style.setProperty("--l", s.toFixed(3));
     stage.style.setProperty("--lamp", TONES[tone].glow);
-    var active = document.querySelector('.chip[data-tone="' + tone + '"] span');
-    toneK.textContent = TONES[tone].k;
-    toneName.textContent = active ? active.textContent : "";
     dimmer.style.setProperty("--fill", level + "%");
     dimOut.textContent = Math.round(level) + "%";
     dimmer.value = level;
