@@ -157,17 +157,13 @@
   function placeOnRoute(u) {
     var r = photo.getBoundingClientRect();
     var p = routePoint(u), b = imgToBox(p[0], p[1], r);
-    target.x = b.x / r.width;
-    target.y = b.y / r.height;
+    target.x = Math.min(0.9, Math.max(0.1, b.x / r.width));
+    target.y = Math.min(0.9, Math.max(0.1, b.y / r.height));
   }
 
-  if (reduceMotion) {
-    hero.style.setProperty("--r", "460px");
-    placeOnRoute(0.4);
-    cur.x = target.x; cur.y = target.y;
-    paintLight();
-    window.addEventListener("resize", function () { placeOnRoute(0.4); cur.x = target.x; cur.y = target.y; paintLight(); });
-  } else {
+  // Reduced-motion visitors get the same light, drifting more slowly.
+  var speed = reduceMotion ? 0.1 : 0.28;
+  {
     hero.addEventListener("pointermove", function (e) {
       var r = photo.getBoundingClientRect();
       target.x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
@@ -182,7 +178,7 @@
 
     (function frame(now) {
       if (heroVisible) {
-        if (!pointerActive) placeOnRoute(0.5 + 0.5 * Math.sin((now - t0) / 1000 * 0.28 - 1.2));
+        if (!pointerActive) placeOnRoute(0.5 + 0.5 * Math.sin((now - t0) / 1000 * speed - 1.2));
         cur.x += (target.x - cur.x) * 0.06;
         cur.y += (target.y - cur.y) * 0.06;
         paintLight();
@@ -265,6 +261,31 @@
     }, { threshold: 0.45 }).observe(stage);
   } else if (reduceMotion) {
     setLevel(78);
+  }
+
+  /* ---------- Projects carousel dots (phones) ---------- */
+  var track = document.querySelector(".projects");
+  var dotsBox = document.getElementById("projectDots");
+  if (track && dotsBox) {
+    var cards = track.querySelectorAll(".project");
+    cards.forEach(function (card, i) {
+      var d = document.createElement("button");
+      d.type = "button";
+      d.setAttribute("aria-label", "Project " + (i + 1));
+      d.addEventListener("click", function () { track.scrollTo({ left: card.offsetLeft - track.offsetLeft - 20, behavior: "smooth" }); });
+      dotsBox.appendChild(d);
+    });
+    var dots = dotsBox.querySelectorAll("button");
+    function syncDots() {
+      var first = cards[0].offsetLeft - track.offsetLeft;
+      var step = cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : 1;
+      var i = Math.round((track.scrollLeft + 20 - (first - 0)) / step);
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      dots.forEach(function (d, k) { d.setAttribute("aria-current", String(k === i)); });
+    }
+    track.addEventListener("scroll", syncDots, { passive: true });
+    window.addEventListener("resize", syncDots);
+    syncDots();
   }
 
   /* ---------- Reveal on scroll ---------- */
