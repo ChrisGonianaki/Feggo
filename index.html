@@ -12,10 +12,18 @@
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+
+<svg class="ls-filters" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="fBase" color-interpolation-filters="sRGB"><feColorMatrix id="mBase" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
+    <filter id="fLit" color-interpolation-filters="sRGB"><feColorMatrix id="mLit" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
+    <filter id="fCore" color-interpolation-filters="sRGB"><feColorMatrix id="mCore" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
+  </defs>
+</svg>
 
 <header class="site-header" id="top">
   <div class="container header-inner">
@@ -97,16 +105,29 @@
         </dl>
       </div>
       <div class="study-visual">
-        <figure class="study-photo" id="studyPhoto">
-          <img src="assets/img/lobby.jpg" alt="Hotel lobby with a warmly lit wooden column and curved seating" loading="lazy">
-          <figcaption>Themis Beach Hotel</figcaption>
-        </figure>
-        <label class="dimmer" for="dimmer">
-          <span class="dimmer-label" data-i18n="study.label">Φως</span>
-          <input type="range" id="dimmer" min="0" max="100" value="12" aria-label="Light level">
-          <output id="dimOut" for="dimmer">12%</output>
-        </label>
-        <p class="dimmer-hint" data-i18n="study.hint">Σύρετε για να φωτίσετε τον χώρο</p>
+        <div class="ls" id="studyPhoto" role="img" aria-label="Hotel lobby whose lamps change colour and brightness">
+          <div class="ls-base"></div>
+          <div class="ls-lit"></div>
+          <div class="ls-core"></div>
+          <div class="ls-bloom"></div>
+          <span class="ls-caption">Themis Beach Hotel</span>
+        </div>
+        <div class="controls">
+          <div class="control">
+            <span class="control-label" data-i18n="study.color">Χρώμα φωτός</span>
+            <div class="chips" role="group" aria-label="Light colour">
+              <button type="button" class="chip" data-tone="warm" aria-pressed="true"><i style="background:#ffb45a"></i><span data-i18n="study.warm">Θερμό λευκό</span><small>2700K</small></button>
+              <button type="button" class="chip" data-tone="white" aria-pressed="false"><i style="background:#fff1e0"></i><span data-i18n="study.neutral">Λευκό</span><small>4000K</small></button>
+              <button type="button" class="chip" data-tone="cool" aria-pressed="false"><i style="background:#c6dcff"></i><span data-i18n="study.cool">Ψυχρό λευκό</span><small>6500K</small></button>
+            </div>
+          </div>
+          <label class="control dimmer" for="dimmer">
+            <span class="control-label" data-i18n="study.label">Ένταση</span>
+            <input type="range" id="dimmer" min="0" max="100" value="12" aria-label="Light level">
+            <output id="dimOut" for="dimmer">12%</output>
+          </label>
+        </div>
+        <p class="dimmer-hint" data-i18n="study.hint">Διαλέξτε χρώμα και σύρετε για να φωτίσετε τον χώρο</p>
       </div>
     </div>
   </section>
@@ -165,24 +186,6 @@
           <img src="assets/img/tsifliki.jpg" alt="Tsifliki pool at night" loading="lazy">
           <figcaption><strong>Tsifliki</strong><span data-i18n="projects.c6">Αρχιτέκτονας: Βαγγέλης Χουρδάκης</span></figcaption>
         </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- Craftsmanship -->
-  <section class="split">
-    <div class="split-media">
-      <img src="assets/img/craftsmanship.jpg" alt="Craftsman measuring a brass ring in the FEGGO workshop" loading="lazy">
-    </div>
-    <div class="split-body">
-      <h2 class="split-title" data-i18n="craft.title">Κατασκευή με τεχνική πειθαρχία</h2>
-      <div class="feature reveal">
-        <h3>Engineering</h3>
-        <p data-i18n="craft.eng">Κάθε λεπτομέρεια εξετάζεται πριν περάσει στην παραγωγή.</p>
-      </div>
-      <div class="feature reveal">
-        <h3>Craftsmanship</h3>
-        <p data-i18n="craft.craft">Η εμπειρία του τεχνίτη συμπληρώνει τη μηχανική ακρίβεια.</p>
       </div>
     </div>
   </section>

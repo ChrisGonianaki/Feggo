@@ -30,8 +30,12 @@
     "study.r3": "discreet general and functional light levels",
     "study.r4t": "Acoustic integration",
     "study.r4": "light and comfort in a single construction",
-    "study.label": "Light",
-    "study.hint": "Drag to light the space",
+    "study.label": "Intensity",
+    "study.color": "Light colour",
+    "study.warm": "Warm white",
+    "study.neutral": "White",
+    "study.cool": "Cool white",
+    "study.hint": "Choose a colour and drag to light the space",
 
     "services.title": "What FEGGO delivers",
     "services.s1t": "Custom luminaires",
@@ -47,9 +51,6 @@
     "projects.c4": "Architecture office: Liakos & Associates Architects",
     "projects.c6": "Architect: Vangelis Chourdakis",
 
-    "craft.title": "Built with technical discipline",
-    "craft.eng": "Every detail is examined before it goes into production.",
-    "craft.craft": "The craftsman's experience complements engineering precision.",
 
     "process.title": "From design to production",
     "process.p1": "Architectural intent",
@@ -169,21 +170,62 @@
     })(t0);
   }
 
-  /* ---------- Lighting study: drag the light level ---------- */
+  /* ---------- Lighting study: choose lamp colour, drag the intensity ---------- */
   var dimmer = document.getElementById("dimmer");
   var dimOut = document.getElementById("dimOut");
-  var studyPhoto = document.getElementById("studyPhoto");
+  var stage = document.getElementById("studyPhoto");
+  var mBase = document.getElementById("mBase");
+  var mLit = document.getElementById("mLit");
+  var mCore = document.getElementById("mCore");
+  var layers = {
+    lit: stage.querySelector(".ls-lit"),
+    core: stage.querySelector(".ls-core"),
+    bloom: stage.querySelector(".ls-bloom")
+  };
+  // Per-channel gains that move the photo's warm light to each lamp colour,
+  // plus the colour of the glow.
+  var TONES = {
+    warm:  { gain: [1.00, 1.00, 1.00], glow: "255,176,86" },
+    white: { gain: [0.95, 1.04, 1.10], glow: "255,240,224" },
+    cool:  { gain: [0.83, 1.03, 1.42], glow: "200,222,255" }
+  };
+  var tone = "warm";
+  var level = 12;
   var userTouched = false;
 
-  function setLevel(v) {
-    var n = Math.max(0, Math.min(100, v));
-    studyPhoto.style.setProperty("--l", (n / 100).toFixed(3));
-    dimmer.style.setProperty("--fill", n + "%");
-    dimOut.textContent = Math.round(n) + "%";
-    dimmer.value = n;
+  function matrix(el, g, b) {
+    el.setAttribute("values",
+      (g[0] * b).toFixed(3) + " 0 0 0 0 0 " + (g[1] * b).toFixed(3) + " 0 0 0 0 0 " + (g[2] * b).toFixed(3) + " 0 0 0 0 0 1 0");
   }
-  setLevel(Number(dimmer.value));
+
+  function render() {
+    var s = level / 100;
+    var g = TONES[tone].gain;
+    matrix(mBase, g, 0.05 + 0.8 * Math.pow(s, 1.1));
+    matrix(mLit, g, 0.4 + 0.75 * s);
+    matrix(mCore, g, 1.25);
+    layers.lit.style.opacity = Math.pow(s, 0.9).toFixed(3);
+    layers.core.style.opacity = Math.pow(s, 0.7).toFixed(3);
+    layers.bloom.style.opacity = (0.3 * s).toFixed(3);
+    stage.style.setProperty("--l", s.toFixed(3));
+    stage.style.setProperty("--lamp", TONES[tone].glow);
+    dimmer.style.setProperty("--fill", level + "%");
+    dimOut.textContent = Math.round(level) + "%";
+    dimmer.value = level;
+  }
+
+  function setLevel(v) { level = Math.max(0, Math.min(100, v)); render(); }
+
   dimmer.addEventListener("input", function () { userTouched = true; setLevel(Number(dimmer.value)); });
+  document.querySelectorAll(".chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      userTouched = true;
+      tone = chip.getAttribute("data-tone");
+      document.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", String(c === chip)); });
+      if (level < 35) setLevel(70); else render();
+    });
+  });
+  render();
 
   // The lights come on once when the section scrolls into view.
   if (!reduceMotion && "IntersectionObserver" in window) {
@@ -192,15 +234,16 @@
       if (!es[0].isIntersecting || started) return;
       started = true;
       obs.disconnect();
-      var from = Number(dimmer.value), to = 72, dur = 2200, s = performance.now();
+      var from = level, to = 78, dur = 2200, s0 = performance.now();
       (function step(now) {
         if (userTouched) return;
-        var p = Math.min(1, (now - s) / dur);
-        var e = 1 - Math.pow(1 - p, 3);
-        setLevel(from + (to - from) * e);
+        var p = Math.min(1, (now - s0) / dur);
+        setLevel(from + (to - from) * (1 - Math.pow(1 - p, 3)));
         if (p < 1) requestAnimationFrame(step);
-      })(s);
-    }, { threshold: 0.45 }).observe(studyPhoto);
+      })(s0);
+    }, { threshold: 0.45 }).observe(stage);
+  } else if (reduceMotion) {
+    setLevel(78);
   }
 
   /* ---------- Reveal on scroll ---------- */
