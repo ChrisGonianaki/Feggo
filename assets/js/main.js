@@ -126,65 +126,133 @@
   /* ---------- Hero: a light that drifts, or follows the pointer ---------- */
   var hero = document.getElementById("hero");
   var photo = hero.querySelector(".hero-photo");
+  var canvas = document.getElementById("heroWave");
   var IMG_W = 1332, IMG_H = 596;
-  // A route along the ribbons (image pixels) that the light follows when nobody is pointing.
-  var ROUTE = [[40, 330], [240, 255], [430, 150], [560, 70], [650, 150], [820, 300], [960, 360], [1120, 280], [1300, 140]];
+  var ctx = canvas.getContext && canvas.getContext("2d");
   var heroVisible = true;
-  var pointerActive = false;
-  var cur = { x: 0.6, y: 0.3 };
-  var target = { x: 0.6, y: 0.3 };
-  var t0 = performance.now();
 
-  // Position of an image pixel inside the hero photo box (matches background-size: cover).
-  function imgToBox(ix, iy, r) {
-    var scale = Math.max(r.width / IMG_W, r.height / IMG_H);
-    var posX = parseFloat(getComputedStyle(photo.querySelector(".hero-layer")).backgroundPositionX) / 100;
-    if (isNaN(posX)) posX = 0.5;
-    return { x: ix * scale + (r.width - IMG_W * scale) * posX, y: iy * scale };
-  }
+  if (ctx) {
+    var lines = new Image();
+    var linesReady = false;
+    lines.onload = function () { linesReady = true; };
+    lines.src = canvas.getAttribute("data-lines");
 
-  function routePoint(u) {
-    var n = ROUTE.length - 1, f = u * n, i = Math.min(n - 1, Math.floor(f)), k = f - i;
-    return [ROUTE[i][0] + (ROUTE[i + 1][0] - ROUTE[i][0]) * k, ROUTE[i][1] + (ROUTE[i + 1][1] - ROUTE[i][1]) * k];
-  }
+    var mask = document.createElement("canvas"), mctx = mask.getContext("2d");
+    var glow = document.createElement("canvas"), gctx = glow.getContext("2d");
+    var W = 1, H = 1, S = 1, OFFX = 0, DPR = 1, boxLeft = 0, boxTop = 0;
 
-  function paintLight() {
-    var r = photo.getBoundingClientRect();
-    hero.style.setProperty("--mx", (cur.x * r.width).toFixed(1) + "px");
-    hero.style.setProperty("--my", (cur.y * r.height).toFixed(1) + "px");
-  }
-
-  function placeOnRoute(u) {
-    var r = photo.getBoundingClientRect();
-    var p = routePoint(u), b = imgToBox(p[0], p[1], r);
-    target.x = Math.min(0.9, Math.max(0.1, b.x / r.width));
-    target.y = Math.min(0.9, Math.max(0.1, b.y / r.height));
-  }
-
-  // Reduced-motion visitors get the same light, drifting more slowly.
-  var speed = reduceMotion ? 0.1 : 0.28;
-  {
-    hero.addEventListener("pointermove", function (e) {
+    function measure() {
       var r = photo.getBoundingClientRect();
-      target.x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-      target.y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+      DPR = Math.min(window.devicePixelRatio || 1, 1.25);
+      W = Math.max(1, Math.round(r.width * DPR));
+      H = Math.max(1, Math.round(r.height * DPR));
+      canvas.width = mask.width = W;
+      canvas.height = mask.height = H;
+      glow.width = Math.max(1, Math.round(W / 6));
+      glow.height = Math.max(1, Math.round(H / 6));
+      var posX = parseFloat(getComputedStyle(hero.querySelector(".hero-layer")).backgroundPositionX) / 100;
+      if (isNaN(posX)) posX = 0.5;
+      S = Math.max(W / IMG_W, H / IMG_H);
+      OFFX = (W - IMG_W * S) * posX;
+      boxLeft = r.left; boxTop = r.top;
+    }
+    measure();
+    window.addEventListener("resize", measure);
+
+    // The wave runs along the ribbons: their direction is about 18 degrees uphill.
+    var ANG = -18 * Math.PI / 180;
+    var DX = Math.cos(ANG), DY = Math.sin(ANG);     // along the ribbons
+    var PX = -DY, PY = DX;                          // across them (the wave front)
+    var U_MIN = -420, U_MAX = 1450;                 // extent of the installation along its length
+    var speed = reduceMotion ? 160 : 330;           // image px per second
+    var u0 = U_MIN, wait = 0.6;
+    var pointerActive = false, pointerU = 0, uCur = U_MIN, amp = 0, ampTarget = 1, lastMove = 0;
+    var last = performance.now();
+
+    function pointerToU(clientX, clientY) {
+      var ix = ((clientX - boxLeft) * DPR - OFFX) / S, iy = ((clientY - boxTop) * DPR) / S;
+      return ix * DX + iy * DY;
+    }
+
+    hero.addEventListener("pointermove", function (e) {
+      pointerU = pointerToU(e.clientX, e.clientY);
+      if (!pointerActive) uCur = pointerU;
       pointerActive = true;
+      lastMove = performance.now();
     });
-    hero.addEventListener("pointerleave", function () { pointerActive = false; });
+    hero.addEventListener("pointerleave", function () { pointerActive = false; u0 = uCur; wait = 0.4; });
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }, { threshold: 0 }).observe(hero);
     }
 
+    // One soft wave front: a wavy line across the ribbons, stroked from wide and faint to thin and strong.
+    function crest(u, strength, phase, t) {
+      if (strength < 0.01) return;
+      var pts = [];
+      for (var s = -760; s <= 760; s += 40) {
+        var warp = 46 * Math.sin(s / 120 + phase + t * 1.2);
+        var ix = DX * (u + warp) + PX * s + IMG_W * 0.5 - DX * 560;
+        var iy = DY * (u + warp) + PY * s + IMG_H * 0.5 - DY * 560;
+        pts.push([ix * S + OFFX, iy * S]);
+      }
+      var W0 = 230 * S;
+      for (var k = 0; k < 7; k++) {
+        mctx.lineWidth = W0 * (1 - k / 7);
+        mctx.strokeStyle = "rgba(255,255,255," + (strength * 0.2).toFixed(3) + ")";
+        mctx.beginPath();
+        for (var i = 0; i < pts.length; i++) { if (i) mctx.lineTo(pts[i][0], pts[i][1]); else mctx.moveTo(pts[i][0], pts[i][1]); }
+        mctx.stroke();
+      }
+    }
+
     (function frame(now) {
-      if (heroVisible) {
-        if (!pointerActive) placeOnRoute(0.5 + 0.5 * Math.sin((now - t0) / 1000 * speed - 1.2));
-        cur.x += (target.x - cur.x) * 0.06;
-        cur.y += (target.y - cur.y) * 0.06;
-        paintLight();
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (heroVisible && linesReady) {
+        var t = now / 1000;
+        // If nobody has moved for a moment (or a finger lifted), the wave carries on by itself.
+        if (pointerActive && now - lastMove > 2000) { pointerActive = false; u0 = uCur; wait = 0.3; }
+        if (pointerActive) {
+          uCur += (pointerU - uCur) * 0.14;
+          ampTarget = 1;
+        } else if (wait > 0) {
+          wait -= dt;
+          ampTarget = 0;
+          if (wait <= 0) { uCur = U_MIN; ampTarget = 1; }
+        } else {
+          uCur += speed * dt;
+          if (uCur > U_MAX) { wait = 1.1; ampTarget = 0; }
+        }
+        amp += (ampTarget - amp) * Math.min(1, dt * 6);
+
+        mctx.setTransform(1, 0, 0, 1, 0, 0);
+        mctx.clearRect(0, 0, W, H);
+        mctx.globalCompositeOperation = "lighter";
+        mctx.lineCap = "round"; mctx.lineJoin = "round";
+        // leading crest, then smaller ripples behind it
+        crest(uCur, amp, 0, t);
+        crest(uCur - 300, amp * 0.5, 1.7, t);
+        crest(uCur - 600, amp * 0.22, 3.1, t);
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.clearRect(0, 0, W, H);
+        ctx.drawImage(lines, OFFX, 0, IMG_W * S, IMG_H * S);
+        ctx.globalCompositeOperation = "destination-in";     // keep the strands only where the wave is
+        ctx.drawImage(mask, 0, 0);
+        ctx.globalCompositeOperation = "source-atop";        // warm gold
+        ctx.fillStyle = "rgba(226,160,70,.42)";
+        ctx.fillRect(0, 0, W, H);
+        gctx.clearRect(0, 0, glow.width, glow.height);       // soft bloom around the lit strands
+        gctx.drawImage(canvas, 0, 0, glow.width, glow.height);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(glow, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = "source-over";
       }
       requestAnimationFrame(frame);
-    })(t0);
+    })(last);
   }
 
   /* ---------- Lighting study: choose lamp colour, drag the intensity ---------- */

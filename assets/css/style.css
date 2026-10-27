@@ -59,13 +59,13 @@ p { margin: 0; }
 .logo { display: flex; align-items: center; }
 .logo img { height: 38px; width: auto; }
 .nav { display: flex; align-items: center; gap: 32px; font-size: 14px; letter-spacing: .04em; }
-.nav a { color: var(--muted); transition: color .25s; }
+.nav a { color: rgba(236,239,243,.88); text-shadow: 0 1px 12px rgba(0,0,0,.8); transition: color .25s; }
 .nav a:hover { color: var(--gold-soft); }
-.nav .nav-cta { color: var(--gold); padding: 9px 20px; border: 1px solid rgba(201,154,91,.55); border-radius: 999px; }
+.nav .nav-cta { text-shadow: none; color: var(--gold); padding: 9px 20px; border: 1px solid rgba(201,154,91,.55); border-radius: 999px; }
 .nav .nav-cta:hover { background: var(--gold); color: var(--bg); }
 .header-tools { display: flex; align-items: center; gap: 12px; }
 .lang-switch { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
-.lang-switch button { font: 500 12px var(--sans); letter-spacing: .1em; color: var(--muted); background: transparent; border: 0; padding: 7px 13px; cursor: pointer; }
+.lang-switch button { font: 500 12px var(--sans); letter-spacing: .1em; color: rgba(236,239,243,.85); background: transparent; border: 0; padding: 7px 13px; cursor: pointer; }
 .lang-switch button[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
 .menu-toggle { display: none; width: 40px; height: 40px; background: transparent; border: 0; cursor: pointer; position: relative; }
 .menu-toggle span { position: absolute; left: 9px; right: 9px; height: 1.5px; background: var(--text); transition: transform .3s, top .3s; }
@@ -76,8 +76,8 @@ p { margin: 0; }
 
 /* ---------- Buttons ---------- */
 .btn { display: inline-block; padding: 15px 30px; border-radius: 999px; font-weight: 500; font-size: 14px; letter-spacing: .06em; transition: background .3s, color .3s, border-color .3s; }
-.btn-gold { background: var(--gold); color: var(--bg); }
-.btn-gold:hover { background: var(--gold-soft); }
+.btn-gold { color: var(--gold); border: 1px solid rgba(201,154,91,.55); }
+.btn-gold:hover { background: var(--gold); color: var(--bg); }
 .btn-ghost { border: 1px solid rgba(236,239,243,.3); color: var(--text); }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 
@@ -104,14 +104,10 @@ p { margin: 0; }
 }
 .hero-layer { position: absolute; inset: 0; background: url("../img/hero-chandelier.jpg") 50% 0 / cover no-repeat; }
 .hero-layer.dim { filter: brightness(.2) saturate(.6); }
-/* The light only lives on the strands: a transparent copy of the lines, revealed around the light point */
-.hero-layer.lit, .hero-layer.bloom {
-  background-image: url("../img/hero-lines.webp");
-  -webkit-mask-image: radial-gradient(circle var(--r) at var(--mx) var(--my), #000 0%, rgba(0,0,0,.75) 30%, rgba(0,0,0,.25) 65%, transparent 100%);
-          mask-image: radial-gradient(circle var(--r) at var(--mx) var(--my), #000 0%, rgba(0,0,0,.75) 30%, rgba(0,0,0,.25) 65%, transparent 100%);
-}
-.hero-layer.lit { filter: brightness(1.05) sepia(.9) saturate(2.1) hue-rotate(-20deg); }
-.hero-layer.bloom { filter: blur(6px) brightness(1.05) sepia(.9) saturate(2.4) hue-rotate(-20deg); mix-blend-mode: screen; opacity: .6; }
+/* The wave of light is drawn on a canvas that only contains the glowing strands */
+.hero-wave { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,.4) 38%, rgba(0,0,0,0) 68%); }
+.hero-content, .hero-foot { z-index: 2; }
 .hero-content { position: relative; padding-bottom: 96px; padding-top: 220px; }
 .hero .eyebrow { margin-bottom: 26px; }
 .hero h1 { font-size: clamp(44px, 7vw, 96px); letter-spacing: -.03em; text-shadow: 0 2px 40px rgba(0,0,0,.7); }
@@ -283,3 +279,7 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
   .carousel-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: var(--line); cursor: pointer; transition: background .3s, width .3s; }
   .carousel-dots button[aria-current="true"] { width: 22px; border-radius: 4px; background: var(--gold); }
 }
+
+/* Keep the menu readable over the bright photo */
+.site-header::before { content: ""; position: absolute; inset: 0 0 -36px 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.7) 55%, rgba(0,0,0,0) 100%); }
+.site-header.scrolled::before { display: none; }
