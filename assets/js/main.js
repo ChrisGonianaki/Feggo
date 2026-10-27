@@ -159,7 +159,7 @@
     measure();
     window.addEventListener("resize", measure);
 
-    // Each ribbon of the installation is its own lane: a centre line (image pixels) and its half thickness.
+    // Each ribbon of the installation is a lane: a centre line (image pixels) and its half thickness.
     var LANES = [
       [[0, 247, 62], [100, 224, 66], [200, 190, 70], [300, 152, 72], [400, 112, 72], [470, 70, 66], [525, 28, 50], [552, -10, 40]],
       [[585, 175, 56], [620, 130, 60], [680, 96, 60], [760, 68, 56], [860, 45, 46], [960, 30, 40], [1085, 12, 34]],
@@ -179,7 +179,7 @@
       }
       dense.push(pts[pts.length - 1].slice());
       for (var m = 1; m < dense.length; m++) len.push(len[m - 1] + Math.hypot(dense[m][0] - dense[m - 1][0], dense[m][1] - dense[m - 1][1]));
-      return { pts: dense, len: len, total: len[len.length - 1] };
+      return { pts: dense, len: len, total: len[len.length - 1], x0: pts[0][0] };
     });
 
     function laneAt(lane, s) {
@@ -189,28 +189,41 @@
       return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
     }
 
-    // Resting state: every line is on, and its brightness ripples gently along the ribbons.
-    var ANG = -18 * Math.PI / 180, DX = Math.cos(ANG), DY = Math.sin(ANG);
-    var RIPPLE_L = 2300, RIPPLE_LAMBDA = 340, RIPPLE_SPEED = reduceMotion ? 40 : 95;   // image px, px/s
+    // One soft round blob, reused for every spot of light.
+    var sprite = document.createElement("canvas");
+    sprite.width = sprite.height = 96;
+    (function () {
+      var sc = sprite.getContext("2d"), g = sc.createRadialGradient(48, 48, 0, 48, 48, 48);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.55, "rgba(255,255,255,.55)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      sc.fillStyle = g; sc.fillRect(0, 0, 96, 96);
+    })();
 
-    function ripple(t) {
-      var cx = W / 2, cy = H / 2, half = RIPPLE_L / 2 * S;
-      var g = mctx.createLinearGradient(cx - DX * half, cy - DY * half, cx + DX * half, cy + DY * half);
-      var steps = Math.round(RIPPLE_L / RIPPLE_LAMBDA * 12);
-      var ph = t * RIPPLE_SPEED / RIPPLE_LAMBDA * Math.PI * 2;
-      for (var i = 0; i <= steps; i++) {
-        var f = i / steps, a = f * RIPPLE_L / RIPPLE_LAMBDA * Math.PI * 2;
-        var v = 0.3 + 0.13 * Math.sin(a - ph) + 0.06 * Math.sin(a * 0.55 + ph * 0.6 + 1.3);
-        g.addColorStop(f, "rgba(255,255,255," + Math.max(0, Math.min(1, v)).toFixed(3) + ")");
-      }
-      mctx.fillStyle = g;
-      mctx.fillRect(0, 0, W, H);
+    function blob(p, scale, alpha) {
+      var r = p[2] * scale * S;
+      mctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      mctx.drawImage(sprite, p[0] * S + OFFX - r, p[1] * S - r, r * 2, r * 2);
     }
 
-    var SIGMA = 105;                                // width of the wave crest along a ribbon
-    var speed = reduceMotion ? 170 : 430;           // image px per second
-    var laneIx = 0, sCur = -250, wait = 0.5, amp = 0, ampTarget = 1;
-    var pointerActive = false, pointerLane = 0, pointerS = 0, lastMove = 0;
+    // The waves travel along each ribbon's own curve, so the light bends exactly where the ribbons bend.
+    var LAMBDA = 310, FLOW = reduceMotion ? 38 : 88;   // wavelength and travel speed along the ribbon (image px, px/s)
+    function flow(t) {
+      var ph = t * FLOW;
+      LANES.forEach(function (lane) {
+        for (var s = 0; s <= lane.total; s += 11) {
+          var u = (s + lane.x0 * 0.6 - ph) / LAMBDA;                       // position within the wave
+          var v = 0.5 + 0.3 * Math.sin(u * 6.2832) + 0.12 * Math.sin(u * 6.2832 * 0.5 + 1.1);
+          var edge = Math.min(1, s / 60, (lane.total - s) / 60);           // fade at the ends of a ribbon
+          blob(laneAt(lane, s), 1.1, 0.16 * v * Math.max(0.2, edge));
+        }
+      });
+      mctx.globalAlpha = 1;
+    }
+
+    // When someone points at a ribbon, a brighter crest rides along it, centred under the pointer.
+    var SIGMA = 105;
+    var pointerActive = false, pointerLane = 0, pointerS = 0, sCur = 0, amp = 0, lastMove = 0;
     var last = performance.now();
 
     function nearestLane(clientX, clientY) {
@@ -226,84 +239,56 @@
 
     hero.addEventListener("pointermove", function (e) {
       var n = nearestLane(e.clientX, e.clientY);
-      if (!pointerActive || n.lane !== pointerLane) { pointerLane = n.lane; sCur = n.s; amp = 0; }
+      if (!pointerActive || n.lane !== pointerLane) { pointerLane = n.lane; sCur = n.s; }
       pointerS = n.s;
       pointerActive = true;
       lastMove = performance.now();
     });
-    hero.addEventListener("pointerleave", function () { pointerActive = false; laneIx = pointerLane; sCur = pointerS; wait = 0.2; });
+    hero.addEventListener("pointerleave", function () { pointerActive = false; });
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }, { threshold: 0 }).observe(hero);
     }
 
-    // Soft glow along one ribbon: a main crest with smaller ripples trailing behind it.
-    function wave(lane, s0, strength) {
+    function crest(lane, s0, strength) {
       if (strength < 0.01) return;
-      var from = Math.max(0, s0 - 700), to = Math.min(lane.total, s0 + 330);
-      for (var s = from; s <= to; s += 15) {
-        var x = s - s0;
-        var prof = Math.exp(-(x * x) / (SIGMA * SIGMA))
-          + 0.5 * Math.exp(-((x + 260) * (x + 260)) / (SIGMA * SIGMA * 1.3))
-          + 0.24 * Math.exp(-((x + 520) * (x + 520)) / (SIGMA * SIGMA * 1.6));
-        var a = Math.min(1, prof) * strength * 0.32;
-        if (a < 0.004) continue;
-        var p = laneAt(lane, s), cx = p[0] * S + OFFX, cy = p[1] * S, r = p[2] * 1.25 * S;
-        var g = mctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        g.addColorStop(0, "rgba(255,255,255," + a.toFixed(3) + ")");
-        g.addColorStop(0.6, "rgba(255,255,255," + (a * 0.55).toFixed(3) + ")");
-        g.addColorStop(1, "rgba(255,255,255,0)");
-        mctx.fillStyle = g;
-        mctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+      for (var s = Math.max(0, s0 - 450); s <= Math.min(lane.total, s0 + 450); s += 12) {
+        var x = s - s0, prof = Math.exp(-(x * x) / (SIGMA * SIGMA));
+        blob(laneAt(lane, s), 1.2, prof * strength * 0.2);
       }
+      mctx.globalAlpha = 1;
     }
 
     (function frame(now) {
       var dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (heroVisible && linesReady) {
-        // If nobody has moved for a moment (or a finger lifted), the wave carries on by itself.
-        if (pointerActive && now - lastMove > 2000) { pointerActive = false; laneIx = pointerLane; sCur = pointerS; wait = 0.2; }
-        var lane;
-        if (pointerActive) {
-          lane = LANES[pointerLane];
-          sCur += (pointerS - sCur) * 0.16;
-          ampTarget = 1;
-        } else {
-          lane = LANES[laneIx];
-          if (wait > 0) {
-            wait -= dt;
-            ampTarget = 0;
-            if (wait <= 0) { sCur = -250; ampTarget = 1; }
-          } else {
-            sCur += speed * dt;
-            if (sCur > lane.total + 330) { laneIx = (laneIx + 1) % LANES.length; wait = 0.35; ampTarget = 0; }
-          }
-        }
-        amp += (ampTarget - amp) * Math.min(1, dt * 7);
+        if (pointerActive && now - lastMove > 2000) pointerActive = false;
+        sCur += (pointerS - sCur) * 0.16;
+        amp += ((pointerActive ? 1 : 0) - amp) * Math.min(1, dt * 5);
 
         mctx.setTransform(1, 0, 0, 1, 0, 0);
         mctx.clearRect(0, 0, W, H);
         mctx.globalCompositeOperation = "source-over";
-        ripple(now / 1000);
+        mctx.fillStyle = "rgba(255,255,255,.2)";              // every line is on
+        mctx.fillRect(0, 0, W, H);
         mctx.globalCompositeOperation = "lighter";
-        wave(lane, sCur, amp);
+        flow(now / 1000);
+        crest(LANES[pointerLane], sCur, amp);
 
         ctx.globalCompositeOperation = "source-over";
         ctx.clearRect(0, 0, W, H);
         ctx.drawImage(lines, OFFX, 0, IMG_W * S, IMG_H * S);
-        ctx.globalCompositeOperation = "destination-in";     // keep the strands only where the wave is
+        ctx.globalCompositeOperation = "destination-in";     // keep the strands, brighter where the wave is
         ctx.drawImage(mask, 0, 0);
         ctx.globalCompositeOperation = "source-atop";        // warm gold
         ctx.fillStyle = "rgba(226,160,70,.45)";
         ctx.fillRect(0, 0, W, H);
-        ctx.globalCompositeOperation = "lighter";            // brighter than the resting lines
+        ctx.globalCompositeOperation = "lighter";
         ctx.globalAlpha = 0.5;
         ctx.drawImage(canvas, 0, 0);
-        ctx.globalAlpha = 1;
         gctx.clearRect(0, 0, glow.width, glow.height);       // soft bloom around the lit strands
         gctx.drawImage(canvas, 0, 0, glow.width, glow.height);
-        ctx.globalCompositeOperation = "lighter";
         ctx.globalAlpha = 0.7;
         ctx.drawImage(glow, 0, 0, W, H);
         ctx.globalAlpha = 1;
