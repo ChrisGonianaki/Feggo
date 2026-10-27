@@ -159,50 +159,84 @@
     measure();
     window.addEventListener("resize", measure);
 
-    // The wave runs along the ribbons: their direction is about 18 degrees uphill.
-    var ANG = -18 * Math.PI / 180;
-    var DX = Math.cos(ANG), DY = Math.sin(ANG);     // along the ribbons
-    var PX = -DY, PY = DX;                          // across them (the wave front)
-    var U_MIN = -420, U_MAX = 1450;                 // extent of the installation along its length
-    var speed = reduceMotion ? 160 : 330;           // image px per second
-    var u0 = U_MIN, wait = 0.6;
-    var pointerActive = false, pointerU = 0, uCur = U_MIN, amp = 0, ampTarget = 1, lastMove = 0;
+    // Each ribbon of the installation is its own lane: a centre line (image pixels) and its half thickness.
+    var LANES = [
+      [[0, 247, 62], [100, 224, 66], [200, 190, 70], [300, 152, 72], [400, 112, 72], [470, 70, 66], [525, 28, 50], [552, -10, 40]],
+      [[585, 175, 56], [620, 130, 60], [680, 96, 60], [760, 68, 56], [860, 45, 46], [960, 30, 40], [1085, 12, 34]],
+      [[110, 348, 58], [200, 338, 62], [300, 324, 66], [400, 310, 66], [500, 296, 60], [600, 276, 60], [700, 242, 58], [790, 205, 50]],
+      [[40, 520, 40], [250, 525, 42], [400, 522, 44], [550, 507, 42], [700, 490, 42], [820, 470, 44], [900, 442, 52], [960, 402, 58], [1010, 352, 66], [1070, 312, 70], [1150, 276, 72], [1250, 236, 72], [1340, 192, 70]]
+    ].map(function (pts) {
+      var dense = [], len = [0];
+      for (var i = 0; i < pts.length - 1; i++) {
+        var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+        for (var k = 0; k < 16; k++) {
+          var t = k / 16, t2 = t * t, t3 = t2 * t, row = [];
+          for (var d = 0; d < 3; d++) {
+            row.push(0.5 * ((2 * p1[d]) + (-p0[d] + p2[d]) * t + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * t2 + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * t3));
+          }
+          dense.push(row);
+        }
+      }
+      dense.push(pts[pts.length - 1].slice());
+      for (var m = 1; m < dense.length; m++) len.push(len[m - 1] + Math.hypot(dense[m][0] - dense[m - 1][0], dense[m][1] - dense[m - 1][1]));
+      return { pts: dense, len: len, total: len[len.length - 1] };
+    });
+
+    function laneAt(lane, s) {
+      var d = Math.max(0, Math.min(lane.total, s)), i = 1;
+      while (i < lane.len.length - 1 && lane.len[i] < d) i++;
+      var span = lane.len[i] - lane.len[i - 1] || 1, k = (d - lane.len[i - 1]) / span, a = lane.pts[i - 1], b = lane.pts[i];
+      return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+    }
+
+    var SIGMA = 105;                                // width of the wave crest along a ribbon
+    var speed = reduceMotion ? 170 : 430;           // image px per second
+    var laneIx = 0, sCur = -250, wait = 0.5, amp = 0, ampTarget = 1;
+    var pointerActive = false, pointerLane = 0, pointerS = 0, lastMove = 0;
     var last = performance.now();
 
-    function pointerToU(clientX, clientY) {
-      var ix = ((clientX - boxLeft) * DPR - OFFX) / S, iy = ((clientY - boxTop) * DPR) / S;
-      return ix * DX + iy * DY;
+    function nearestLane(clientX, clientY) {
+      var ix = ((clientX - boxLeft) * DPR - OFFX) / S, iy = ((clientY - boxTop) * DPR) / S, best = { d: 1e9, lane: 0, s: 0 };
+      LANES.forEach(function (lane, li) {
+        for (var i = 0; i < lane.pts.length; i += 2) {
+          var p = lane.pts[i], dd = Math.hypot(ix - p[0], (iy - p[1]) * 0.8);
+          if (dd < best.d) best = { d: dd, lane: li, s: lane.len[i] };
+        }
+      });
+      return best;
     }
 
     hero.addEventListener("pointermove", function (e) {
-      pointerU = pointerToU(e.clientX, e.clientY);
-      if (!pointerActive) uCur = pointerU;
+      var n = nearestLane(e.clientX, e.clientY);
+      if (!pointerActive || n.lane !== pointerLane) { pointerLane = n.lane; sCur = n.s; amp = 0; }
+      pointerS = n.s;
       pointerActive = true;
       lastMove = performance.now();
     });
-    hero.addEventListener("pointerleave", function () { pointerActive = false; u0 = uCur; wait = 0.4; });
+    hero.addEventListener("pointerleave", function () { pointerActive = false; laneIx = pointerLane; sCur = pointerS; wait = 0.2; });
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }, { threshold: 0 }).observe(hero);
     }
 
-    // One soft wave front: a wavy line across the ribbons, stroked from wide and faint to thin and strong.
-    function crest(u, strength, phase, t) {
+    // Soft glow along one ribbon: a main crest with smaller ripples trailing behind it.
+    function wave(lane, s0, strength) {
       if (strength < 0.01) return;
-      var pts = [];
-      for (var s = -760; s <= 760; s += 40) {
-        var warp = 46 * Math.sin(s / 120 + phase + t * 1.2);
-        var ix = DX * (u + warp) + PX * s + IMG_W * 0.5 - DX * 560;
-        var iy = DY * (u + warp) + PY * s + IMG_H * 0.5 - DY * 560;
-        pts.push([ix * S + OFFX, iy * S]);
-      }
-      var W0 = 230 * S;
-      for (var k = 0; k < 7; k++) {
-        mctx.lineWidth = W0 * (1 - k / 7);
-        mctx.strokeStyle = "rgba(255,255,255," + (strength * 0.2).toFixed(3) + ")";
-        mctx.beginPath();
-        for (var i = 0; i < pts.length; i++) { if (i) mctx.lineTo(pts[i][0], pts[i][1]); else mctx.moveTo(pts[i][0], pts[i][1]); }
-        mctx.stroke();
+      var from = Math.max(0, s0 - 700), to = Math.min(lane.total, s0 + 330);
+      for (var s = from; s <= to; s += 15) {
+        var x = s - s0;
+        var prof = Math.exp(-(x * x) / (SIGMA * SIGMA))
+          + 0.5 * Math.exp(-((x + 260) * (x + 260)) / (SIGMA * SIGMA * 1.3))
+          + 0.24 * Math.exp(-((x + 520) * (x + 520)) / (SIGMA * SIGMA * 1.6));
+        var a = Math.min(1, prof) * strength * 0.32;
+        if (a < 0.004) continue;
+        var p = laneAt(lane, s), cx = p[0] * S + OFFX, cy = p[1] * S, r = p[2] * 1.25 * S;
+        var g = mctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        g.addColorStop(0, "rgba(255,255,255," + a.toFixed(3) + ")");
+        g.addColorStop(0.6, "rgba(255,255,255," + (a * 0.55).toFixed(3) + ")");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        mctx.fillStyle = g;
+        mctx.fillRect(cx - r, cy - r, r * 2, r * 2);
       }
     }
 
@@ -210,30 +244,30 @@
       var dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (heroVisible && linesReady) {
-        var t = now / 1000;
         // If nobody has moved for a moment (or a finger lifted), the wave carries on by itself.
-        if (pointerActive && now - lastMove > 2000) { pointerActive = false; u0 = uCur; wait = 0.3; }
+        if (pointerActive && now - lastMove > 2000) { pointerActive = false; laneIx = pointerLane; sCur = pointerS; wait = 0.2; }
+        var lane;
         if (pointerActive) {
-          uCur += (pointerU - uCur) * 0.14;
+          lane = LANES[pointerLane];
+          sCur += (pointerS - sCur) * 0.16;
           ampTarget = 1;
-        } else if (wait > 0) {
-          wait -= dt;
-          ampTarget = 0;
-          if (wait <= 0) { uCur = U_MIN; ampTarget = 1; }
         } else {
-          uCur += speed * dt;
-          if (uCur > U_MAX) { wait = 1.1; ampTarget = 0; }
+          lane = LANES[laneIx];
+          if (wait > 0) {
+            wait -= dt;
+            ampTarget = 0;
+            if (wait <= 0) { sCur = -250; ampTarget = 1; }
+          } else {
+            sCur += speed * dt;
+            if (sCur > lane.total + 330) { laneIx = (laneIx + 1) % LANES.length; wait = 0.35; ampTarget = 0; }
+          }
         }
-        amp += (ampTarget - amp) * Math.min(1, dt * 6);
+        amp += (ampTarget - amp) * Math.min(1, dt * 7);
 
         mctx.setTransform(1, 0, 0, 1, 0, 0);
         mctx.clearRect(0, 0, W, H);
         mctx.globalCompositeOperation = "lighter";
-        mctx.lineCap = "round"; mctx.lineJoin = "round";
-        // leading crest, then smaller ripples behind it
-        crest(uCur, amp, 0, t);
-        crest(uCur - 300, amp * 0.5, 1.7, t);
-        crest(uCur - 600, amp * 0.22, 3.1, t);
+        wave(lane, sCur, amp);
 
         ctx.globalCompositeOperation = "source-over";
         ctx.clearRect(0, 0, W, H);
@@ -241,12 +275,17 @@
         ctx.globalCompositeOperation = "destination-in";     // keep the strands only where the wave is
         ctx.drawImage(mask, 0, 0);
         ctx.globalCompositeOperation = "source-atop";        // warm gold
-        ctx.fillStyle = "rgba(226,160,70,.42)";
+        ctx.fillStyle = "rgba(226,160,70,.45)";
         ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";            // brighter than the resting lines
+        ctx.globalAlpha = 0.85;
+        ctx.drawImage(canvas, 0, 0);
+        ctx.globalAlpha = 1;
         gctx.clearRect(0, 0, glow.width, glow.height);       // soft bloom around the lit strands
         gctx.drawImage(canvas, 0, 0, glow.width, glow.height);
         ctx.globalCompositeOperation = "lighter";
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = 1;
+        ctx.drawImage(glow, 0, 0, W, H);
         ctx.drawImage(glow, 0, 0, W, H);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = "source-over";
