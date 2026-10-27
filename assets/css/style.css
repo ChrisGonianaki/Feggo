@@ -472,3 +472,10 @@ p { margin: 0; }
 .contact-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 @media (max-width: 1000px) { .projects { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .projects { grid-template-columns: 1fr; } .project { aspect-ratio: 4 / 4.2; } }
+
+/* Logo */
+.logo { display: flex; align-items: center; }
+.logo img { height: 40px; width: auto; }
+.footer-logo { height: 34px; width: auto; }
+.contact-logo { width: 180px; height: auto; margin-bottom: 48px; }
+.hero-content { padding-top: calc(var(--header-h) + 24px); }
