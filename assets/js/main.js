@@ -208,13 +208,13 @@
     }
 
     // The waves travel along each ribbon's own curve, so the light bends exactly where the ribbons bend.
-    var LAMBDA = 310, FLOW = reduceMotion ? 38 : 88;   // wavelength and travel speed along the ribbon (image px, px/s)
+    var LAMBDA = 420, FLOW = reduceMotion ? 20 : 46;   // wavelength and travel speed along the ribbon (image px, px/s)
     function flow(t) {
       var ph = t * FLOW;
       LANES.forEach(function (lane) {
         for (var s = 0; s <= lane.total; s += 11) {
           var u = (s + lane.x0 * 0.6 - ph) / LAMBDA;                       // position within the wave
-          var v = 0.5 + 0.3 * Math.sin(u * 6.2832) + 0.12 * Math.sin(u * 6.2832 * 0.5 + 1.1);
+          var v = 0.55 + 0.14 * Math.sin(u * 6.2832) + 0.05 * Math.sin(u * 6.2832 * 0.5 + 1.1);
           var edge = Math.min(1, s / 60, (lane.total - s) / 60);           // fade at the ends of a ribbon
           blob(laneAt(lane, s), 1.1, 0.16 * v * Math.max(0.2, edge));
         }
@@ -271,7 +271,7 @@
         mctx.setTransform(1, 0, 0, 1, 0, 0);
         mctx.clearRect(0, 0, W, H);
         mctx.globalCompositeOperation = "source-over";
-        mctx.fillStyle = "rgba(255,255,255,.2)";              // every line is on
+        mctx.fillStyle = "rgba(255,255,255,.5)";              // every line is on, evenly
         mctx.fillRect(0, 0, W, H);
         mctx.globalCompositeOperation = "lighter";
         flow(now / 1000);
