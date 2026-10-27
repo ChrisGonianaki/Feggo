@@ -29,12 +29,6 @@
     "study.r3": "discreet general and functional light levels",
     "study.r4t": "Acoustic integration",
     "study.r4": "light and comfort in a single construction",
-    "study.label": "Intensity",
-    "study.color": "Light colour",
-    "study.warm": "Warm white",
-    "study.neutral": "White",
-    "study.cool": "Cool white",
-    "study.hint": "Choose a colour and drag to light the space",
 
     "services.title": "What FEGGO delivers",
     "services.s1t": "Custom luminaires",
@@ -89,7 +83,6 @@
       b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
     });
     try { localStorage.setItem("feggo-lang", lang); } catch (e) {}
-    if (window.__feggoRender) window.__feggoRender();
   }
 
   var initial = "el";
@@ -122,63 +115,6 @@
   });
   document.querySelectorAll(".nav a").forEach(function (a) { a.addEventListener("click", closeMenu); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
-
-  /* ---------- Lighting study: choose lamp colour, drag the intensity ---------- */
-  var dimmer = document.getElementById("dimmer");
-  var dimOut = document.getElementById("dimOut");
-  var stage = document.getElementById("studyPhoto");
-  // Per-channel gains that move the photo's warm light to each lamp colour,
-  // plus the colour of the glow and its temperature.
-  var TONES = {
-    warm:  { gain: [1.00, 1.00, 1.00], glow: "255,176,86",  k: "2700K" },
-    white: { gain: [0.95, 1.04, 1.10], glow: "255,240,224", k: "4000K" },
-    cool:  { gain: [0.83, 1.03, 1.42], glow: "200,222,255", k: "6500K" }
-  };
-  var tone = "warm";
-  var level = 12;
-  var userTouched = false;
-
-  function render() {
-    var s = level / 100;
-    stage.style.setProperty("--l", s.toFixed(3));
-    stage.style.setProperty("--lamp", TONES[tone].glow);
-    dimmer.style.setProperty("--fill", level + "%");
-    dimOut.textContent = Math.round(level) + "%";
-    dimmer.value = level;
-  }
-  window.__feggoRender = render;
-
-  function setLevel(v) { level = Math.max(0, Math.min(100, v)); render(); }
-
-  dimmer.addEventListener("input", function () { userTouched = true; setLevel(Number(dimmer.value)); });
-  document.querySelectorAll(".chip").forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      userTouched = true;
-      tone = chip.getAttribute("data-tone");
-      document.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", String(c === chip)); });
-      if (level < 35) setLevel(70); else render();
-    });
-  });
-  render();
-
-  // The lights come on once when the section scrolls into view.
-  if (!reduceMotion && "IntersectionObserver" in window) {
-    var started = false;
-    new IntersectionObserver(function (es, obs) {
-      if (!es[0].isIntersecting || started) return;
-      started = true;
-      obs.disconnect();
-      var from = level, to = 78, dur = 2200, s0 = performance.now();
-      (function step(now) {
-        if (userTouched) return;
-        var p = Math.min(1, (now - s0) / dur);
-        setLevel(from + (to - from) * (1 - Math.pow(1 - p, 3)));
-        if (p < 1) requestAnimationFrame(step);
-      })(s0);
-    }, { threshold: 0.3 }).observe(stage);
-  } else if (reduceMotion) {
-    setLevel(78);
-  }
 
   /* ---------- Projects carousel dots (phones) ---------- */
   var track = document.querySelector(".projects");

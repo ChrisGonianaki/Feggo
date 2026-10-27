@@ -299,35 +299,9 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .nav .nav-cta:hover::after, .btn:hover::after { opacity: .9; box-shadow: 0 0 6px 1px rgba(var(--ln, 201,154,91), .6), 0 0 20px 3px rgba(var(--ln, 201,154,91), .28); }
 .btn { text-shadow: none; }
 
-/* Light study: the wall light hangs above the text and its beam lights it */
-.study { --l: .78; --lamp: 255,180,90; grid-template-columns: 1.25fr .75fr; align-items: start; }
-.study-text { position: relative; padding-top: 34px; }
-.fixture { position: absolute; top: 0; left: 0; width: 120px; z-index: 2; }
-.fixture svg { display: block; }
-.slit rect { fill: rgb(var(--lamp)); opacity: calc(.15 + .85 * var(--l)); }
-.slit.core rect { filter: drop-shadow(0 0 calc(2px + 8px * var(--l)) rgb(var(--lamp))); }
-.beam { position: absolute; top: 30px; left: 0; right: 0; bottom: -30px; pointer-events: none; z-index: 0;
-  background: conic-gradient(from 0deg at 60px 0, transparent 0deg 92deg, rgba(var(--lamp), calc(.16 * var(--l))) 118deg, rgba(var(--lamp), calc(.34 * var(--l))) 150deg, rgba(var(--lamp), calc(.2 * var(--l))) 176deg, transparent 198deg 360deg);
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.6) 50%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.6) 50%, transparent 100%); }
-.lit-text { position: relative; z-index: 1; opacity: calc(.2 + .8 * var(--l)); }
-.lit-text h2 { color: color-mix(in srgb, rgb(var(--lamp)) calc(var(--l) * 30%), #eceff3); text-shadow: 0 0 calc(40px * var(--l)) rgba(var(--lamp), calc(.45 * var(--l))); }
-.lit-text .lead { text-shadow: 0 0 calc(28px * var(--l)) rgba(var(--lamp), calc(.4 * var(--l))); }
-.study-text .eyebrow { margin-top: 0; }
-.study-visual { padding-top: 34px; }
-.readout { display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px; }
-.readout-k { font-size: clamp(48px, 7vw, 84px); font-weight: 200; letter-spacing: -.03em; line-height: 1; color: color-mix(in srgb, rgb(var(--lamp)) 70%, #fff); text-shadow: 0 0 calc(34px * var(--l)) rgba(var(--lamp), calc(.55 * var(--l))); }
-.readout-n { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
-.controls { margin-top: 0; }
-@media (max-width: 1000px) { .study { grid-template-columns: 1fr; } .study-visual { padding-top: 0; } }
-@media (max-width: 760px) { .fixture { left: 0; } }
-
-/* Elegant, frameless version */
-.beam { top: 26px; left: -70px; right: -70px; bottom: -90px;
-  background: conic-gradient(from 0deg at 130px 0, transparent 0deg 88deg, rgba(var(--lamp), calc(.1 * var(--l))) 112deg, rgba(var(--lamp), calc(.3 * var(--l))) 148deg, rgba(var(--lamp), calc(.14 * var(--l))) 178deg, transparent 204deg 360deg);
-  -webkit-mask-image: radial-gradient(ellipse 85% 95% at 130px 0, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%);
-          mask-image: radial-gradient(ellipse 85% 95% at 130px 0, #000 0%, rgba(0,0,0,.55) 45%, transparent 100%); }
-.study .rows .row, .study .row:last-child { border: 0; padding: 14px 0; }
-.study .rows { margin-top: 36px; }
-.study-visual { padding-top: 40px; }
-.study-visual .controls { gap: 26px; }
+/* Lighting design: title left, the four levels of light right */
+.study { grid-template-columns: 1fr 1fr; gap: 96px; align-items: start; }
+.study .rows { margin: 0; }
+.study .row { padding: 22px 0; border-top: 1px solid var(--line); }
+.study .row:last-child { border-bottom: 1px solid var(--line); }
+@media (max-width: 1000px) { .study { grid-template-columns: 1fr; gap: 56px; } }
