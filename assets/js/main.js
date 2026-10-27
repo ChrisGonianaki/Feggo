@@ -126,11 +126,27 @@
   /* ---------- Hero: a light that drifts, or follows the pointer ---------- */
   var hero = document.getElementById("hero");
   var photo = hero.querySelector(".hero-photo");
+  var IMG_W = 1332, IMG_H = 596;
+  // A route along the ribbons (image pixels) that the light follows when nobody is pointing.
+  var ROUTE = [[40, 330], [240, 255], [430, 150], [560, 70], [650, 150], [820, 300], [960, 360], [1120, 280], [1300, 140]];
   var heroVisible = true;
   var pointerActive = false;
-  var target = { x: 0.6, y: 0.38 };
-  var cur = { x: 0.6, y: 0.38 };
+  var cur = { x: 0.6, y: 0.3 };
+  var target = { x: 0.6, y: 0.3 };
   var t0 = performance.now();
+
+  // Position of an image pixel inside the hero photo box (matches background-size: cover).
+  function imgToBox(ix, iy, r) {
+    var scale = Math.max(r.width / IMG_W, r.height / IMG_H);
+    var posX = parseFloat(getComputedStyle(photo.querySelector(".hero-layer")).backgroundPositionX) / 100;
+    if (isNaN(posX)) posX = 0.5;
+    return { x: ix * scale + (r.width - IMG_W * scale) * posX, y: iy * scale };
+  }
+
+  function routePoint(u) {
+    var n = ROUTE.length - 1, f = u * n, i = Math.min(n - 1, Math.floor(f)), k = f - i;
+    return [ROUTE[i][0] + (ROUTE[i + 1][0] - ROUTE[i][0]) * k, ROUTE[i][1] + (ROUTE[i + 1][1] - ROUTE[i][1]) * k];
+  }
 
   function paintLight() {
     var r = photo.getBoundingClientRect();
@@ -138,10 +154,19 @@
     hero.style.setProperty("--my", (cur.y * r.height).toFixed(1) + "px");
   }
 
+  function placeOnRoute(u) {
+    var r = photo.getBoundingClientRect();
+    var p = routePoint(u), b = imgToBox(p[0], p[1], r);
+    target.x = b.x / r.width;
+    target.y = b.y / r.height;
+  }
+
   if (reduceMotion) {
-    hero.style.setProperty("--r", "520px");
+    hero.style.setProperty("--r", "460px");
+    placeOnRoute(0.4);
+    cur.x = target.x; cur.y = target.y;
     paintLight();
-    window.addEventListener("resize", paintLight);
+    window.addEventListener("resize", function () { placeOnRoute(0.4); cur.x = target.x; cur.y = target.y; paintLight(); });
   } else {
     hero.addEventListener("pointermove", function (e) {
       var r = photo.getBoundingClientRect();
@@ -157,13 +182,9 @@
 
     (function frame(now) {
       if (heroVisible) {
-        if (!pointerActive) {
-          var t = (now - t0) / 1000;
-          target.x = 0.52 + 0.38 * Math.sin(t * 0.32);
-          target.y = 0.36 + 0.2 * Math.sin(t * 0.51 + 1.2);
-        }
-        cur.x += (target.x - cur.x) * 0.07;
-        cur.y += (target.y - cur.y) * 0.07;
+        if (!pointerActive) placeOnRoute(0.5 + 0.5 * Math.sin((now - t0) / 1000 * 0.28 - 1.2));
+        cur.x += (target.x - cur.x) * 0.06;
+        cur.y += (target.y - cur.y) * 0.06;
         paintLight();
       }
       requestAnimationFrame(frame);
