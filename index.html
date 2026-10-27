@@ -4,14 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FEGGO — Custom designs come to light</title>
-  <meta name="description" content="FEGGO: Σχεδιασμός και παραγωγή custom φωτιστικών στην Κρήτη. Από το αρχιτεκτονικό όραμα στην κατασκευή υψηλής ποιότητας.">
+  <meta name="description" content="FEGGO: Φωτοτεχνική μελέτη και παραγωγή custom φωτιστικών στην Κρήτη. Από το αρχιτεκτονικό όραμα στην κατασκευή υψηλής ποιότητας.">
   <meta property="og:title" content="FEGGO — When Custom Meets FEGGO">
-  <meta property="og:description" content="Custom lighting designed and made in Crete. 40+ years of lighting expertise.">
-  <meta property="og:image" content="assets/img/hero-pendant.jpg">
+  <meta property="og:description" content="Lighting design and custom luminaires made in Crete. 40+ years of lighting expertise.">
+  <meta property="og:image" content="assets/img/hero-chandelier.jpg">
+  <meta name="theme-color" content="#050b14">
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -21,7 +22,7 @@
     <a href="#top" class="logo" aria-label="FEGGO"><img src="assets/img/logo-wordmark.png" alt="FEGGO" width="144" height="54"></a>
     <nav class="nav" id="nav">
       <a href="#about" data-i18n="nav.about">Η εταιρεία</a>
-      <a href="#services" data-i18n="nav.services">Υπηρεσίες</a>
+      <a href="#study" data-i18n="nav.study">Φωτοτεχνική μελέτη</a>
       <a href="#projects" data-i18n="nav.projects">Έργα</a>
       <a href="#process" data-i18n="nav.process">Διαδικασία</a>
       <a href="#contact" class="nav-cta" data-i18n="nav.contact">Επικοινωνία</a>
@@ -39,23 +40,30 @@
 </header>
 
 <main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-media" role="img" aria-label="Custom pendant lamp over a stone table at dusk, Crete"></div>
-    <div class="hero-shade"></div>
+  <!-- Hero: the light follows the pointer -->
+  <section class="hero" id="hero">
+    <div class="hero-photo" role="img" aria-label="Custom crystal light installation shaped like flowing ribbons">
+      <div class="hero-layer dim"></div>
+      <div class="hero-layer lit"></div>
+      <div class="hero-glow"></div>
+    </div>
     <div class="container hero-content">
+      <p class="eyebrow" data-i18n="hero.eyebrow">Φωτοτεχνική μελέτη · Custom φωτιστικά</p>
       <h1>When Custom<br>Meets FEGGO</h1>
       <p class="hero-sub" data-i18n="hero.sub">Από το αρχιτεκτονικό όραμα<br>στην κατασκευή υψηλής ποιότητας</p>
       <div class="hero-actions">
         <a href="#contact" class="btn btn-gold" data-i18n="hero.cta">Συζητήστε το έργο σας</a>
-        <a href="#services" class="btn btn-ghost" data-i18n="hero.more">Τι αναλαμβάνουμε</a>
+        <a href="#study" class="btn btn-ghost" data-i18n="hero.more">Φωτοτεχνική μελέτη</a>
       </div>
     </div>
-    <p class="container hero-tagline">Custom designs come to light</p>
+    <div class="container hero-foot">
+      <span>Custom designs come to light</span>
+      <span class="hero-hint" data-i18n="hero.hint">Κινήστε το φως</span>
+    </div>
   </section>
 
   <!-- At a glance -->
-  <section class="section light" id="about">
+  <section class="section alt" id="about">
     <div class="container">
       <div class="glance">
         <div class="glance-item reveal">
@@ -74,20 +82,45 @@
     </div>
   </section>
 
+  <!-- Lighting design -->
+  <section class="section" id="study">
+    <div class="container study">
+      <div class="study-text">
+        <p class="eyebrow" data-i18n="study.eyebrow">Μελέτη φωτισμού</p>
+        <h2 data-i18n="study.title">Το φως σχεδιάζεται πριν κατασκευαστεί</h2>
+        <p class="lead" data-i18n="study.lead">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
+        <dl class="rows">
+          <div class="row reveal"><dt data-i18n="study.r1t">Γραμμικός φωτισμός</dt><dd data-i18n="study.r1">συνεχής ένταξη στην αρχιτεκτονική</dd></div>
+          <div class="row reveal"><dt data-i18n="study.r2t">Accent και framing</dt><dd data-i18n="study.r2">ακριβής ανάδειξη αντικειμένων και υλικών</dd></div>
+          <div class="row reveal"><dt>Downlighting</dt><dd data-i18n="study.r3">διακριτική γενική και λειτουργική στάθμη</dd></div>
+          <div class="row reveal"><dt data-i18n="study.r4t">Ακουστική ενσωμάτωση</dt><dd data-i18n="study.r4">φως και άνεση σε κοινή κατασκευή</dd></div>
+        </dl>
+      </div>
+      <div class="study-visual">
+        <figure class="study-photo" id="studyPhoto">
+          <img src="assets/img/lobby.jpg" alt="Hotel lobby with a warmly lit wooden column and curved seating" loading="lazy">
+          <figcaption>Themis Beach Hotel</figcaption>
+        </figure>
+        <label class="dimmer" for="dimmer">
+          <span class="dimmer-label" data-i18n="study.label">Φως</span>
+          <input type="range" id="dimmer" min="0" max="100" value="12" aria-label="Light level">
+          <output id="dimOut" for="dimmer">12%</output>
+        </label>
+        <p class="dimmer-hint" data-i18n="study.hint">Σύρετε για να φωτίσετε τον χώρο</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Services -->
-  <section class="section dark" id="services">
+  <section class="section alt" id="services">
     <div class="container">
       <div class="section-head">
         <h2 data-i18n="services.title">Τι αναλαμβάνει η FEGGO</h2>
       </div>
-      <div class="grid-2">
+      <div class="grid-3">
         <article class="feature reveal">
           <h3 data-i18n="services.s1t">Custom φωτιστικά</h3>
           <p data-i18n="services.s1">Μοναδικές κατασκευές για συγκεκριμένο χώρο, κλίμακα και αισθητική.</p>
-        </article>
-        <article class="feature reveal">
-          <h3 data-i18n="services.s2t">Φωτοτεχνική μελέτη</h3>
-          <p data-i18n="services.s2">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
         </article>
         <article class="feature reveal">
           <h3 data-i18n="services.s3t">Ειδικές κατασκευές</h3>
@@ -102,7 +135,7 @@
   </section>
 
   <!-- Projects -->
-  <section class="section dark" id="projects">
+  <section class="section" id="projects">
     <div class="container">
       <div class="section-head">
         <h2 data-i18n="projects.title">Επιλεγμένα έργα</h2>
@@ -137,7 +170,7 @@
   </section>
 
   <!-- Craftsmanship -->
-  <section class="split dark">
+  <section class="split">
     <div class="split-media">
       <img src="assets/img/craftsmanship.jpg" alt="Craftsman measuring a brass ring in the FEGGO workshop" loading="lazy">
     </div>
@@ -155,7 +188,7 @@
   </section>
 
   <!-- Process -->
-  <section class="section light" id="process">
+  <section class="section alt" id="process">
     <div class="container">
       <div class="section-head">
         <h2 data-i18n="process.title">Από το σχέδιο στην κατασκευή</h2>
@@ -171,7 +204,7 @@
   </section>
 
   <!-- Contact -->
-  <section class="section dark contact" id="contact">
+  <section class="section contact" id="contact">
     <div class="container">
       <img class="contact-logo" src="assets/img/logo-full.png" alt="FEGGO — Custom Designs Come to Light" width="220" height="111">
       <h2 class="contact-title" data-i18n="contact.title">Έχετε ένα σχέδιο<br>που ζητά να υλοποιηθεί;</h2>
