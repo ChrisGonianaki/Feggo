@@ -293,17 +293,31 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
 .btn-ghost:hover { color: #fff; border: 0; }
 @media (max-width: 1000px) { .nav .nav-cta { padding: 15px 0; } .nav .nav-cta::after { display: none; } .nav .nav-cta { border-bottom: 1px solid var(--line); } }
 
-/* Light simulator: a slim up/down wall light on a textured wall */
-.ls { --l: .12; --lamp: 255,180,90; position: relative; overflow: hidden; aspect-ratio: 4 / 4.4; background: #0b0a09; }
-.wall-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.beam-fill { fill: rgb(var(--lamp)); opacity: calc(.5 * var(--l)); }
-.beam-grain { fill: rgb(var(--lamp)); opacity: calc(.28 * var(--l)); }
-.halo ellipse { fill: rgb(var(--lamp)); opacity: calc(.14 * var(--l)); }
-.slit rect { fill: rgb(var(--lamp)); opacity: calc(.12 + .88 * var(--l)); }
-.slit.core rect { fill: #fff; opacity: calc(.1 + .8 * var(--l)); }
-.ls-caption { position: absolute; left: 20px; bottom: 16px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,239,243,.8); }
 
 /* Fainter light lines */
 .nav .nav-cta::after, .btn::after { opacity: .55; box-shadow: 0 0 4px 0 rgba(var(--ln, 201,154,91), .4), 0 0 12px 1px rgba(var(--ln, 201,154,91), .15); }
 .nav .nav-cta:hover::after, .btn:hover::after { opacity: .9; box-shadow: 0 0 6px 1px rgba(var(--ln, 201,154,91), .6), 0 0 20px 3px rgba(var(--ln, 201,154,91), .28); }
 .btn { text-shadow: none; }
+
+/* Light study: the wall light hangs above the text and its beam lights it */
+.study { --l: .78; --lamp: 255,180,90; grid-template-columns: 1.25fr .75fr; align-items: start; }
+.study-text { position: relative; padding-top: 34px; }
+.fixture { position: absolute; top: 0; left: 0; width: 120px; z-index: 2; }
+.fixture svg { display: block; }
+.slit rect { fill: rgb(var(--lamp)); opacity: calc(.15 + .85 * var(--l)); }
+.slit.core rect { filter: drop-shadow(0 0 calc(2px + 8px * var(--l)) rgb(var(--lamp))); }
+.beam { position: absolute; top: 30px; left: 0; right: 0; bottom: -30px; pointer-events: none; z-index: 0;
+  background: conic-gradient(from 0deg at 60px 0, transparent 0deg 92deg, rgba(var(--lamp), calc(.16 * var(--l))) 118deg, rgba(var(--lamp), calc(.34 * var(--l))) 150deg, rgba(var(--lamp), calc(.2 * var(--l))) 176deg, transparent 198deg 360deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.6) 50%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.6) 50%, transparent 100%); }
+.lit-text { position: relative; z-index: 1; opacity: calc(.2 + .8 * var(--l)); }
+.lit-text h2 { color: color-mix(in srgb, rgb(var(--lamp)) calc(var(--l) * 30%), #eceff3); text-shadow: 0 0 calc(40px * var(--l)) rgba(var(--lamp), calc(.45 * var(--l))); }
+.lit-text .lead { text-shadow: 0 0 calc(28px * var(--l)) rgba(var(--lamp), calc(.4 * var(--l))); }
+.study-text .eyebrow { margin-top: 0; }
+.study-visual { padding-top: 34px; }
+.readout { display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px; }
+.readout-k { font-size: clamp(48px, 7vw, 84px); font-weight: 200; letter-spacing: -.03em; line-height: 1; color: color-mix(in srgb, rgb(var(--lamp)) 70%, #fff); text-shadow: 0 0 calc(34px * var(--l)) rgba(var(--lamp), calc(.55 * var(--l))); }
+.readout-n { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.controls { margin-top: 0; }
+@media (max-width: 1000px) { .study { grid-template-columns: 1fr; } .study-visual { padding-top: 0; } }
+@media (max-width: 760px) { .fixture { left: 0; } }

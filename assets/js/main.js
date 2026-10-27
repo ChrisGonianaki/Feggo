@@ -127,7 +127,8 @@
   var dimmer = document.getElementById("dimmer");
   var dimOut = document.getElementById("dimOut");
   var stage = document.getElementById("studyPhoto");
-  var toneLabel = document.getElementById("toneLabel");
+  var toneK = document.getElementById("toneK");
+  var toneName = document.getElementById("toneName");
   // Per-channel gains that move the photo's warm light to each lamp colour,
   // plus the colour of the glow and its temperature.
   var TONES = {
@@ -144,7 +145,8 @@
     stage.style.setProperty("--l", s.toFixed(3));
     stage.style.setProperty("--lamp", TONES[tone].glow);
     var active = document.querySelector('.chip[data-tone="' + tone + '"] span');
-    toneLabel.textContent = TONES[tone].k + (active ? " · " + active.textContent : "");
+    toneK.textContent = TONES[tone].k;
+    toneName.textContent = active ? active.textContent : "";
     dimmer.style.setProperty("--fill", level + "%");
     dimOut.textContent = Math.round(level) + "%";
     dimmer.value = level;
@@ -178,7 +180,7 @@
         setLevel(from + (to - from) * (1 - Math.pow(1 - p, 3)));
         if (p < 1) requestAnimationFrame(step);
       })(s0);
-    }, { threshold: 0.45 }).observe(stage);
+    }, { threshold: 0.3 }).observe(stage);
   } else if (reduceMotion) {
     setLevel(78);
   }

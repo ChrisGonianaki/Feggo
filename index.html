@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=1793127268">
+  <link rel="stylesheet" href="assets/css/style.css?v=1793127401">
 </head>
 <body>
 
@@ -81,54 +81,31 @@
 
   <!-- Lighting design -->
   <section class="section" id="study">
-    <div class="container study">
+    <div class="container study" id="studyPhoto">
       <div class="study-text">
-        <p class="eyebrow" data-i18n="study.eyebrow">Μελέτη φωτισμού</p>
-        <h2 data-i18n="study.title">Το φως σχεδιάζεται πριν κατασκευαστεί</h2>
-        <p class="lead" data-i18n="study.lead">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
-        <dl class="rows">
-          <div class="row reveal"><dt data-i18n="study.r1t">Γραμμικός φωτισμός</dt><dd data-i18n="study.r1">συνεχής ένταξη στην αρχιτεκτονική</dd></div>
-          <div class="row reveal"><dt data-i18n="study.r2t">Accent και framing</dt><dd data-i18n="study.r2">ακριβής ανάδειξη αντικειμένων και υλικών</dd></div>
-          <div class="row reveal"><dt>Downlighting</dt><dd data-i18n="study.r3">διακριτική γενική και λειτουργική στάθμη</dd></div>
-          <div class="row reveal"><dt data-i18n="study.r4t">Ακουστική ενσωμάτωση</dt><dd data-i18n="study.r4">φως και άνεση σε κοινή κατασκευή</dd></div>
-        </dl>
+        <div class="fixture" aria-hidden="true">
+          <svg viewBox="0 0 120 34" width="120" height="34">
+            <rect x="30" y="2" width="60" height="22" rx="5" fill="#15120f" stroke="#2c261f"/>
+            <g class="slit core"><rect x="36" y="22.5" width="48" height="2" rx="1"/></g>
+          </svg>
+        </div>
+        <div class="beam" aria-hidden="true"></div>
+        <div class="lit-text">
+          <p class="eyebrow" data-i18n="study.eyebrow">Μελέτη φωτισμού</p>
+          <h2 data-i18n="study.title">Το φως σχεδιάζεται πριν κατασκευαστεί</h2>
+          <p class="lead" data-i18n="study.lead">Τεχνική επιλογή φωτός, οπτικών και θέσεων πριν από την κατασκευή.</p>
+          <dl class="rows">
+            <div class="row"><dt data-i18n="study.r1t">Γραμμικός φωτισμός</dt><dd data-i18n="study.r1">συνεχής ένταξη στην αρχιτεκτονική</dd></div>
+            <div class="row"><dt data-i18n="study.r2t">Accent και framing</dt><dd data-i18n="study.r2">ακριβής ανάδειξη αντικειμένων και υλικών</dd></div>
+            <div class="row"><dt>Downlighting</dt><dd data-i18n="study.r3">διακριτική γενική και λειτουργική στάθμη</dd></div>
+            <div class="row"><dt data-i18n="study.r4t">Ακουστική ενσωμάτωση</dt><dd data-i18n="study.r4">φως και άνεση σε κοινή κατασκευή</dd></div>
+          </dl>
+        </div>
       </div>
       <div class="study-visual">
-        <div class="ls" id="studyPhoto" role="img" aria-label="Slim wall light casting up and down beams on a textured wall">
-          <svg class="wall-svg" viewBox="0 0 400 440" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-              <filter id="grain" x="0" y="0" width="100%" height="100%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.9 0.6" numOctaves="2" seed="7"/>
-                <feGaussianBlur stdDeviation=".6"/>
-                <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.6 -0.5"/>
-              </filter>
-              <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
-              <filter id="softer" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="22"/></filter>
-              <filter id="glow" x="-100%" y="-300%" width="300%" height="700%"><feGaussianBlur stdDeviation="4"/></filter>
-              <linearGradient id="gUp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-              <linearGradient id="gDown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".55" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-              <mask id="beams" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="440">
-                <g filter="url(#soft)">
-                  <path d="M171 214 Q150 110 96 0 L304 0 Q250 110 229 214 Z" fill="url(#gUp)"/>
-                  <path d="M171 226 Q150 330 96 440 L304 440 Q250 330 229 226 Z" fill="url(#gDown)"/>
-                </g>
-              </mask>
-            </defs>
-            <rect width="400" height="440" fill="#0b0a09"/>
-            <rect width="400" height="440" filter="url(#grain)" opacity=".1"/>
-            <g class="beams" mask="url(#beams)">
-              <rect width="400" height="440" class="beam-fill"/>
-              <rect width="400" height="440" filter="url(#grain)" class="beam-grain"/>
-            </g>
-            <g filter="url(#softer)" class="halo">
-              <ellipse cx="200" cy="120" rx="95" ry="110"/>
-              <ellipse cx="200" cy="320" rx="95" ry="110"/>
-            </g>
-            <rect x="170" y="209" width="60" height="22" rx="4" fill="#15120f" stroke="#2a241d" stroke-width="1"/>
-            <g class="slit" filter="url(#glow)"><rect x="176" y="208" width="48" height="3" rx="1.5"/><rect x="176" y="229" width="48" height="3" rx="1.5"/></g>
-            <g class="slit core"><rect x="177" y="208.5" width="46" height="2" rx="1"/><rect x="177" y="229.5" width="46" height="2" rx="1"/></g>
-          </svg>
-          <span class="ls-caption" id="toneLabel">2700K</span>
+        <div class="readout" aria-live="polite">
+          <span class="readout-k" id="toneK">2700K</span>
+          <span class="readout-n" id="toneName">Θερμό λευκό</span>
         </div>
         <div class="controls">
           <div class="control">
@@ -145,7 +122,7 @@
             <output id="dimOut" for="dimmer">12%</output>
           </label>
         </div>
-        <p class="dimmer-hint" data-i18n="study.hint">Διαλέξτε χρώμα και σύρετε για να φωτίσετε τον χώρο</p>
+        <p class="dimmer-hint" data-i18n="study.hint">Διαλέξτε χρώμα και σύρετε για να φωτίσετε το κείμενο</p>
       </div>
     </div>
   </section>
@@ -261,6 +238,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=1793127206"></script>
+<script src="assets/js/main.js?v=1793127376"></script>
 </body>
 </html>
