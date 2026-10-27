@@ -340,3 +340,17 @@ a.contact-item:hover span:last-child { color: var(--gold-soft); }
   .project:nth-child(n) { grid-column: auto; grid-row: auto; }
   .projects { grid-auto-rows: auto; }
 }
+
+/* Facts: centred, with a count-up */
+.glance { text-align: center; }
+.glance-item, .glance-item:first-child { padding: 8px 40px; }
+.glance-item:first-child { border-left: 0; }
+.glance-item { display: flex; flex-direction: column; align-items: center; }
+.glance-label, .glance-item p:not(.big-num) { margin-left: auto; margin-right: auto; }
+.big-num { font-variant-numeric: tabular-nums; }
+.big-num span { display: inline-block; min-width: 1.15ch; }
+.glance-item:nth-child(2) { transition-delay: .18s; }
+.glance-item:nth-child(3) { transition-delay: .36s; }
+@keyframes numGlow { 0% { text-shadow: 0 0 0 rgba(201,154,91,0); } 60% { text-shadow: 0 0 36px rgba(201,154,91,.55); } 100% { text-shadow: 0 0 14px rgba(201,154,91,.18); } }
+.big-num.done { animation: numGlow 1.4s ease-out forwards; }
+@media (max-width: 760px) { .glance-item, .glance-item:first-child { padding: 0; border-left: 0; } }

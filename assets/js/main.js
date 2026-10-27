@@ -142,6 +142,26 @@
     syncDots();
   }
 
+  /* ---------- Count-up for the 40+ ---------- */
+  var counter = document.getElementById("countUp");
+  if (counter) {
+    var to = Number(counter.getAttribute("data-to")) || 40;
+    var big = counter.parentNode;
+    if (!reduceMotion && "IntersectionObserver" in window) {
+      counter.textContent = "0";
+      new IntersectionObserver(function (es, obs) {
+        if (!es[0].isIntersecting) return;
+        obs.disconnect();
+        var s0 = performance.now(), dur = 1700;
+        (function tick(now) {
+          var p = Math.min(1, (now - s0) / dur), e = 1 - Math.pow(1 - p, 3);
+          counter.textContent = Math.round(to * e);
+          if (p < 1) requestAnimationFrame(tick); else big.classList.add("done");
+        })(s0);
+      }, { threshold: 0.6 }).observe(big);
+    }
+  }
+
   /* ---------- Reveal on scroll ---------- */
   var items = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window) {
