@@ -445,3 +445,12 @@ p { margin: 0; }
   .split-body { padding: 64px 16px; }
   .statement, .callout { padding: 44px 20px; }
 }
+
+/* Simplified layout */
+.section { padding: 96px 0; }
+.glance { margin-bottom: 0; }
+.section-head { margin-bottom: 48px; padding-bottom: 20px; }
+.split { min-height: 520px; }
+.split-body { display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+.split-body .feature { margin-bottom: 0; }
+.split-title { font-size: clamp(28px, 3.4vw, 40px); padding-bottom: 20px; border-bottom: 1.5px solid var(--gold); }
