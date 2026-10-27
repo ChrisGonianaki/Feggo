@@ -90,6 +90,7 @@
       b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
     });
     try { localStorage.setItem("feggo-lang", lang); } catch (e) {}
+    if (window.__feggoRender) window.__feggoRender();
   }
 
   var initial = "el";
@@ -302,20 +303,14 @@
   var dimmer = document.getElementById("dimmer");
   var dimOut = document.getElementById("dimOut");
   var stage = document.getElementById("studyPhoto");
+  var toneLabel = document.getElementById("toneLabel");
   var mBase = document.getElementById("mBase");
-  var mLit = document.getElementById("mLit");
-  var mCore = document.getElementById("mCore");
-  var layers = {
-    lit: stage.querySelector(".ls-lit"),
-    core: stage.querySelector(".ls-core"),
-    bloom: stage.querySelector(".ls-bloom")
-  };
   // Per-channel gains that move the photo's warm light to each lamp colour,
-  // plus the colour of the glow.
+  // plus the colour of the glow and its temperature.
   var TONES = {
-    warm:  { gain: [1.00, 1.00, 1.00], glow: "255,176,86" },
-    white: { gain: [0.95, 1.04, 1.10], glow: "255,240,224" },
-    cool:  { gain: [0.83, 1.03, 1.42], glow: "200,222,255" }
+    warm:  { gain: [1.00, 1.00, 1.00], glow: "255,176,86",  k: "2700K" },
+    white: { gain: [0.95, 1.04, 1.10], glow: "255,240,224", k: "4000K" },
+    cool:  { gain: [0.83, 1.03, 1.42], glow: "200,222,255", k: "6500K" }
   };
   var tone = "warm";
   var level = 12;
@@ -328,19 +323,16 @@
 
   function render() {
     var s = level / 100;
-    var g = TONES[tone].gain;
-    matrix(mBase, g, 0.05 + 0.8 * Math.pow(s, 1.1));
-    matrix(mLit, g, 0.4 + 0.75 * s);
-    matrix(mCore, g, 1.25);
-    layers.lit.style.opacity = Math.pow(s, 0.9).toFixed(3);
-    layers.core.style.opacity = Math.pow(s, 0.7).toFixed(3);
-    layers.bloom.style.opacity = (0.3 * s).toFixed(3);
+    matrix(mBase, TONES[tone].gain, 0.35 + 0.75 * s);
     stage.style.setProperty("--l", s.toFixed(3));
     stage.style.setProperty("--lamp", TONES[tone].glow);
+    var active = document.querySelector('.chip[data-tone="' + tone + '"] span');
+    toneLabel.textContent = TONES[tone].k + (active ? " · " + active.textContent : "");
     dimmer.style.setProperty("--fill", level + "%");
     dimOut.textContent = Math.round(level) + "%";
     dimmer.value = level;
   }
+  window.__feggoRender = render;
 
   function setLevel(v) { level = Math.max(0, Math.min(100, v)); render(); }
 

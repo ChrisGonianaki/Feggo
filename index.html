@@ -20,8 +20,6 @@
 <svg class="ls-filters" width="0" height="0" aria-hidden="true" focusable="false">
   <defs>
     <filter id="fBase" color-interpolation-filters="sRGB"><feColorMatrix id="mBase" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
-    <filter id="fLit" color-interpolation-filters="sRGB"><feColorMatrix id="mLit" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
-    <filter id="fCore" color-interpolation-filters="sRGB"><feColorMatrix id="mCore" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
   </defs>
 </svg>
 
@@ -104,12 +102,14 @@
         </dl>
       </div>
       <div class="study-visual">
-        <div class="ls" id="studyPhoto" role="img" aria-label="Hotel lobby whose lamps change colour and brightness">
-          <div class="ls-base"></div>
-          <div class="ls-lit"></div>
-          <div class="ls-core"></div>
-          <div class="ls-bloom"></div>
-          <span class="ls-caption">Themis Beach Hotel</span>
+        <div class="ls" id="studyPhoto" role="img" aria-label="Oval wall light that changes colour and brightness">
+          <div class="ls-wall"></div>
+          <div class="lamp">
+            <img class="lamp-img" src="assets/img/lamp.jpg" alt="" width="278" height="450">
+            <div class="lamp-rim"></div>
+            <div class="lamp-disc"></div>
+          </div>
+          <span class="ls-caption" id="toneLabel">2700K</span>
         </div>
         <div class="controls">
           <div class="control">
